@@ -10,6 +10,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageButton;
 
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.Boost;
 
 import java.io.File;
@@ -132,6 +137,32 @@ public class FunctionImpl implements FunctionAccessor {
 //        Log.d("result bitmap height ", Integer.toString(bitmap.getHeight()));
 
         return bitmap;
+    }
+
+    @Override
+    public Mat convert_to_mat(Bitmap bmp){
+        Mat ImageMat = new Mat ( bmp.getHeight(), bmp.getWidth(), CvType.CV_8U, new Scalar(4));
+        Bitmap myBitmap32 = bmp.copy(Bitmap.Config.ARGB_8888, true);
+        Utils.bitmapToMat(myBitmap32, ImageMat);
+
+        return ImageMat;
+    }
+
+    @Override
+    public Bitmap convert_to_bitmap(Mat mat){
+        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(),  mat.rows(),Bitmap.Config.ARGB_8888);;
+        Utils.matToBitmap(mat, resultBitmap);
+
+        return resultBitmap;
+    }
+
+    @Override
+    public Mat mirror(Mat photo) {
+        Mat newPhoto = new Mat();
+
+        Imgproc.cvtColor(photo, newPhoto, Imgproc.COLOR_RGB2GRAY, 4);
+
+        return newPhoto;
     }
 
 }

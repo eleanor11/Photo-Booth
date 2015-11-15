@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
 
 import eleanor.photobooth.Functions.FunctionAccessor;
 import eleanor.photobooth.Functions.FunctionImpl;
@@ -47,13 +48,26 @@ public class ChooseEffectActivity extends Activity {
             final String fn = intent.getStringExtra("fileName");
             Bitmap photo = fa.get_photo(fn);
 
-            ImageView ib4 = (ImageView) findViewById(R.id.imageView4);
-            ib4.setImageBitmap(photo);
-            ib4.setOnClickListener(new View.OnClickListener() {
+            ImageView iv4 = (ImageView) findViewById(R.id.imageView4);
+            iv4.setImageBitmap(photo);
+            iv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     interaction.putExtra("interactionFileName", fn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
+            final Bitmap bmpMirror = fa.convert_to_bitmap(fa.mirror(fa.convert_to_mat(photo)));
+            iv0.setImageBitmap(bmpMirror);
+            iv0.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmpMirror);
+                    interaction.putExtra("interactionFileName", nfn);
                     startActivity(interaction);
                 }
             });

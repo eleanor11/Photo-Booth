@@ -1,8 +1,12 @@
 package eleanor.photobooth;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -22,6 +26,26 @@ public class InteractionActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.interaction);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            //byte[] bis = intent.getByteArrayExtra("bitmap");
+            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
+
+            //String picturePath = intent.getParcelableExtra("string");
+            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
+
+//            Bundle bundle = intent.getExtras();
+//            Bitmap photo = bundle.getParcelable("bitmap");
+
+            final String fn = intent.getStringExtra("interactionFileName");
+            Bitmap photo = fa.get_photo(fn);
+
+            ImageView imageView = (ImageView) findViewById(R.id.imageInteraction);
+            imageView.setImageBitmap(photo);
+
+        }
+
     };
 
     @Override

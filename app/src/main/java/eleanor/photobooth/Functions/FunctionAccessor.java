@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import org.opencv.core.Mat;
+
 /**
  * Created by Eleanor on 2015/11/14.
  */
@@ -17,5 +19,10 @@ public interface FunctionAccessor {
 
     String save_photo(Bitmap photo);
     Bitmap get_photo(String fileName);
+
+    Mat convert_to_mat(Bitmap bmp);
+    Bitmap convert_to_bitmap(Mat mat);
+
+    Mat mirror(Mat photo);
 
 }
