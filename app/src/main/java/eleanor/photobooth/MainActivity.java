@@ -3,13 +3,17 @@ package eleanor.photobooth;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -46,7 +50,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = fa.get_photo_from_album();
-                startActivityForResult(intent, PHOTOREQUESTCODE.PHOTOZOOM.toInt());
+                startActivityForResult(intent, PHOTOREQUESTCODE.ORIGINPIC.toInt());
+                //startActivityForResult(intent, PHOTOREQUESTCODE.PHOTOZOOM.toInt());
             }
         });
 
@@ -55,6 +60,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = fa.take_photo();
                 startActivityForResult(intent, PHOTOREQUESTCODE.PHOTORAPH.toInt());
+
             }
         });
     }
@@ -65,7 +71,7 @@ public class MainActivity extends Activity {
             return;
         if (requestCode == PHOTOREQUESTCODE.PHOTOZOOM.toInt()){
             if (data == null) return;
-            Intent intent = fa.zoom_photo(data.getData(), true);
+            Intent intent = fa.zoom_photo(data.getData(), false);
             startActivityForResult(intent, PHOTOREQUESTCODE.PHOTORESULT.toInt());
         }
         if (requestCode == PHOTOREQUESTCODE.PHOTORAPH.toInt()){
@@ -78,11 +84,43 @@ public class MainActivity extends Activity {
             Bundle extras = data.getExtras();
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0 - 100)压缩文件
+                //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// (0 - 100)压缩文件
                 ImageView imageView = (ImageView) findViewById(R.id.imageID);
                 imageView.setImageBitmap(photo);
+
+                Intent chooseEffect = new Intent(MainActivity.this, ChooseEffectActivity.class);
+                chooseEffect.putExtras(extras);
+                startActivity(chooseEffect);
             }
+        }
+        if (requestCode == PHOTOREQUESTCODE.ORIGINPIC.toInt()) {
+            if (data == null) return;
+
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+            ImageView imageView = (ImageView) findViewById(R.id.imageID);
+            imageView.setImageBitmap(bitmap);
+
+            Intent chooseEffect = new Intent(MainActivity.this, ChooseEffectActivity.class);
+            //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            //bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos);
+            //byte[] bitmapByte = baos.toByteArray();
+            //chooseEffect.putExtra("string", picturePath);
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable("bitmap", bitmap);
+//            chooseEffect.putExtras(bundle);
+
+            String fn = fa.save_photo(bitmap);
+            chooseEffect.putExtra("fileName", fn);
+
+            startActivity(chooseEffect);
         }
     }
 

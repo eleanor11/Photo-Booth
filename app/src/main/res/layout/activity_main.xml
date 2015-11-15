@@ -4,57 +4,63 @@
     android:layout_height="match_parent">
 
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageID"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:baselineAligned="false"
-        android:layout_gravity="right"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true">
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
+        <ImageView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.15"></FrameLayout>
+            android:id="@+id/imageID"
+            android:layout_weight="1"
+            android:scaleType="fitCenter" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="相册"
-            android:id="@+id/btn_01"
-            style="@style/AppTheme"
-            android:clickable="false"
-            android:layout_gravity="left"
-            android:layout_weight="0.25" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:baselineAligned="false"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentRight="false"
+            android:layout_centerHorizontal="true">
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"></FrameLayout>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.15"></FrameLayout>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:text="拍摄"
-            android:id="@+id/btn_02"
-            style="@style/AppTheme"
-            android:layout_gravity="right"
-            android:layout_weight="0.25" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="相册"
+                android:id="@+id/btn_01"
+                style="@style/AppTheme"
+                android:clickable="false"
+                android:layout_gravity="left"
+                android:layout_weight="0.25" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.15"></FrameLayout>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"></FrameLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="拍摄"
+                android:id="@+id/btn_02"
+                style="@style/AppTheme"
+                android:layout_gravity="right"
+                android:layout_weight="0.25" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.15"></FrameLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 

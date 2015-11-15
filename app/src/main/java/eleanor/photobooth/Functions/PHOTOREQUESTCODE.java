@@ -7,7 +7,9 @@ public enum PHOTOREQUESTCODE {
     NONE(0),
     PHOTORAPH(1),
     PHOTOZOOM(2),
-    PHOTORESULT(3);
+    PHOTORESULT(3),
+    ORIGINPHOTO(4),
+    ORIGINPIC(5);
 
     private final int code;
 

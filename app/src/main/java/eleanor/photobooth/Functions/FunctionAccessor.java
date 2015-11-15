@@ -12,6 +12,10 @@ public interface FunctionAccessor {
     Intent take_photo();
     Intent get_photo_from_album();
     Intent zoom_photo(Uri uri, boolean fixed);
-    Bitmap compress_photo(Bitmap photo, boolean fixed, int size);
+
+    Bitmap rescale_photo(Bitmap photo, int newWidth, int newHeight);
+
+    String save_photo(Bitmap photo);
+    Bitmap get_photo(String fileName);
 
 }
