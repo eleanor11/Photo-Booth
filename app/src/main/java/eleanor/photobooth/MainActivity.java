@@ -51,15 +51,16 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = fa.get_photo_from_album();
                 startActivityForResult(intent, PHOTOREQUESTCODE.ORIGINPIC.toInt());
-                //startActivityForResult(intent, PHOTOREQUESTCODE.PHOTOZOOM.toInt());
             }
         });
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = fa.take_photo();
-                startActivityForResult(intent, PHOTOREQUESTCODE.PHOTORAPH.toInt());
+                //Intent intent = fa.take_photo();
+
+                Intent chooseEffectDynamic = new Intent(MainActivity.this, ChooseEffectDynamicActivity.class);
+                startActivity(chooseEffectDynamic);
 
             }
         });
@@ -121,6 +122,10 @@ public class MainActivity extends Activity {
             chooseEffect.putExtra("fileName", fn);
 
             startActivity(chooseEffect);
+        }
+        if (requestCode == PHOTOREQUESTCODE.ORIGINPHOTO.toInt()) {
+            Intent chooseEffectDynamic = new Intent(MainActivity.this, ChooseEffectDynamicActivity.class);
+            startActivity(chooseEffectDynamic);
         }
     }
 
