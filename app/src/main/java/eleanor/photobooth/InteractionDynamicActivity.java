@@ -1,10 +1,8 @@
 package eleanor.photobooth;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -13,7 +11,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -24,16 +21,16 @@ import org.opencv.android.OpenCVLoader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
 import eleanor.photobooth.Functions.FunctionAccessor;
 import eleanor.photobooth.Functions.FunctionImpl;
 
 /**
  * Created by Eleanor on 2015/11/17.
  */
-public class ChooseEffectDynamicActivity extends Activity implements SurfaceHolder.Callback {
+public class InteractionDynamicActivity extends Activity implements SurfaceHolder.Callback{
     Camera camera;
     SurfaceView surfaceView;
+    ImageView imageView;
     SurfaceHolder surfaceHolder;
     boolean previewing = false;
 
@@ -42,37 +39,28 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
     Bitmap originPhoto;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.choose_effect_camera);
+        setContentView(R.layout.interaction_camera);
 
-        surfaceView = (SurfaceView)findViewById(R.id.surfaceView4);
+        surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+//        surfaceView.setVisibility(SurfaceView.INVISIBLE);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
 
     }
 
-    private void workoutEffects(){
-        ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
+    private void workoutEffects() {
+
+        imageView = (ImageView) findViewById(R.id.imageView);
         if (originPhoto == null){
             Log.d(TAG, "origin photo null");
             return;
         }
-//        Log.d(TAG, Integer.toString(originPhoto.getHeight()));
-//        Log.d(TAG, Integer.toString(originPhoto.getWidth()));
-        iv0.setImageBitmap(originPhoto);
-        final Bitmap bmpMirror = fa.mirror(originPhoto);
-        iv0.setImageBitmap(bmpMirror);
-        iv0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("effectName", "Mirror");
-                surfaceDestroyed(surfaceHolder);
-                startActivity(interaction);
-            }
-        });
+
+        imageView.setImageBitmap(originPhoto);
+//        fa.save_photo(originPhoto);
     }
 
     @Override
@@ -86,11 +74,6 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             try {
                 camera.setPreviewDisplay(surfaceHolder);
                 camera.startPreview();
-
-//                surfaceView.setDrawingCacheEnabled(true);
-//                surfaceView.buildDrawingCache();
-//                originPhoto = Bitmap.createBitmap(surfaceView.getDrawingCache());
-
                 previewing = true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -118,7 +101,7 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             workoutEffects();
 
 
-//            Log.d(TAG, "ok?");
+            Log.d(TAG, "ok?");
 //            fa.save_photo(fa.rotate_bitmap(bitmap));
         }
     };
@@ -128,7 +111,8 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         camera = Camera.open();
         camera.setDisplayOrientation(90);
         camera.setPreviewCallback(previewCallback);
-        Log.d(TAG, "cam open");
+
+        Log.d(TAG,"cam open");
     }
 
     @Override
@@ -144,7 +128,6 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         Log.d(TAG,"cam close");
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -158,7 +141,7 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         }
     }
 
-    //OpenCV库加载并初始化成功后的回调函数
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 
         @Override
@@ -175,6 +158,5 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             }
         }
     };
-
 
 }

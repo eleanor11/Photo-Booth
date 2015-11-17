@@ -28,6 +28,7 @@ import eleanor.photobooth.Functions.PHOTOREQUESTCODE;
 public class ChooseEffectActivity extends Activity {
     FunctionAccessor fa = new FunctionImpl();
     private static final String TAG = "photo_booth";
+    Bitmap originPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,10 @@ public class ChooseEffectActivity extends Activity {
 //            Bitmap photo = bundle.getParcelable("bitmap");
 
             final String fn = intent.getStringExtra("fileName");
-            Bitmap photo = fa.get_photo(fn);
+            originPhoto = fa.get_photo(fn);
 
             ImageView iv4 = (ImageView) findViewById(R.id.imageView4);
-            iv4.setImageBitmap(photo);
+            iv4.setImageBitmap(originPhoto);
             iv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -59,8 +60,9 @@ public class ChooseEffectActivity extends Activity {
                 }
             });
 
+            //workout effects
             ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
-            final Bitmap bmpMirror = fa.convert_to_bitmap(fa.mirror(fa.convert_to_mat(photo)));
+            final Bitmap bmpMirror = fa.mirror(originPhoto);
             iv0.setImageBitmap(bmpMirror);
             iv0.setOnClickListener(new View.OnClickListener() {
                 @Override

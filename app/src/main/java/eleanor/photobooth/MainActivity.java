@@ -106,8 +106,8 @@ public class MainActivity extends Activity {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
             Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
-            ImageView imageView = (ImageView) findViewById(R.id.imageID);
-            imageView.setImageBitmap(bitmap);
+            //ImageView imageView = (ImageView) findViewById(R.id.imageID);
+            //imageView.setImageBitmap(bitmap);
 
             Intent chooseEffect = new Intent(MainActivity.this, ChooseEffectActivity.class);
             //ByteArrayOutputStream baos = new ByteArrayOutputStream();

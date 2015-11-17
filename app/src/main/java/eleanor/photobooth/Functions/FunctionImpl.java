@@ -11,8 +11,10 @@ import android.util.Log;
 import android.widget.ImageButton;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.Boost;
@@ -98,13 +100,13 @@ public class FunctionImpl implements FunctionAccessor {
 //        bitmap = rescale_photo(bitmap, 50, 50);
 
         Date date = new Date();
-        String fileName = Environment.getExternalStorageDirectory().getPath() + "/" + Long.toString(date.getTime()) + ".png";
+        String fileName = Environment.getExternalStorageDirectory().getPath() + "/" + Long.toString(date.getTime()) + ".jpg";
         File file = new File(fileName);
         FileOutputStream fout = null;
         try{
             file.createNewFile();
             fout = new FileOutputStream(file);
-            boolean t = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
+            boolean t = bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
 //            Log.d("result file write", Boolean.toString(t));
             fout.flush();
             fout.close();
@@ -139,8 +141,8 @@ public class FunctionImpl implements FunctionAccessor {
         return bitmap;
     }
 
-    @Override
-    public Mat convert_to_mat(Bitmap bmp){
+
+    private Mat convert_to_mat(Bitmap bmp){
         Mat ImageMat = new Mat ( bmp.getHeight(), bmp.getWidth(), CvType.CV_8U, new Scalar(4));
         Bitmap myBitmap32 = bmp.copy(Bitmap.Config.ARGB_8888, true);
         Utils.bitmapToMat(myBitmap32, ImageMat);
@@ -148,21 +150,38 @@ public class FunctionImpl implements FunctionAccessor {
         return ImageMat;
     }
 
-    @Override
-    public Bitmap convert_to_bitmap(Mat mat){
-        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(),  mat.rows(),Bitmap.Config.ARGB_8888);;
+
+    private Bitmap convert_to_bitmap(Mat mat){
+        Bitmap resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888);;
         Utils.matToBitmap(mat, resultBitmap);
 
         return resultBitmap;
     }
 
     @Override
-    public Mat mirror(Mat photo) {
-        Mat newPhoto = new Mat();
+    public Bitmap rotate_bitmap(Bitmap bitmap) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
 
-        Imgproc.cvtColor(photo, newPhoto, Imgproc.COLOR_RGB2GRAY, 4);
+    @Override
+    public Bitmap mirror(Bitmap bitmap) {
 
-        return newPhoto;
+        Mat photo = convert_to_mat(bitmap);
+
+        Rect roi = new Rect(0, 0, photo.width(), photo.height() / 2);
+        Mat p1 = new Mat(photo, roi);
+        Mat p2 = new Mat();
+        Core.flip(p1, p2, 0);
+
+        Mat newPhoto = new Mat(p1.rows() + p2.rows(), p1.cols(), p1.type());;
+        Mat submit = newPhoto.rowRange(0, p1.rows());
+        p1.copyTo(submit);
+        submit = newPhoto.rowRange(p1.rows(), p1.rows() + p2.rows());
+        p2.copyTo(submit);
+
+        return convert_to_bitmap(newPhoto);
     }
 
 }

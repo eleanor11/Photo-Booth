@@ -59,14 +59,12 @@
 
 
 
-            <org.opencv.android.JavaCameraView
+            <SurfaceView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/originView"
+                android:id="@+id/surfaceView4"
                 android:layout_weight="0.33"
-                android:scaleType="fitXY"
-                opencv:show_fps="false"
-                opencv:camera_id="any"/>
+                android:scaleType="fitXY" />
 
             <ImageView
                 android:layout_width="match_parent"

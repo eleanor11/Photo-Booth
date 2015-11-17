@@ -20,9 +20,8 @@ public interface FunctionAccessor {
     String save_photo(Bitmap photo);
     Bitmap get_photo(String fileName);
 
-    Mat convert_to_mat(Bitmap bmp);
-    Bitmap convert_to_bitmap(Mat mat);
+    Bitmap rotate_bitmap(Bitmap bitmap);
 
-    Mat mirror(Mat photo);
+    Bitmap mirror(Bitmap photo);
 
 }
