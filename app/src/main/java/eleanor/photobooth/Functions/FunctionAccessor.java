@@ -22,6 +22,9 @@ public interface FunctionAccessor {
 
     Bitmap rotate_bitmap(Bitmap bitmap);
 
-    Bitmap mirror(Bitmap photo);
+    Bitmap mirrorUp(Bitmap photo);
+    Bitmap mirrorLeft(Bitmap photo);
+    Bitmap mirrorDown(Bitmap photo);
+    Bitmap mirrorRight(Bitmap photo);
 
 }

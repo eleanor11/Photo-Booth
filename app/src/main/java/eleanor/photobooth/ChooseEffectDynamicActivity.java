@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
+import eleanor.photobooth.Functions.EFFECTCODE;
 import eleanor.photobooth.Functions.FunctionAccessor;
 import eleanor.photobooth.Functions.FunctionImpl;
 
@@ -62,14 +63,13 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
 //        Log.d(TAG, Integer.toString(originPhoto.getHeight()));
 //        Log.d(TAG, Integer.toString(originPhoto.getWidth()));
         iv0.setImageBitmap(originPhoto);
-        final Bitmap bmpMirror = fa.mirror(originPhoto);
+        final Bitmap bmpMirror = fa.mirrorUp(originPhoto);
         iv0.setImageBitmap(bmpMirror);
         iv0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("effectName", "Mirror");
-                surfaceDestroyed(surfaceHolder);
+                interaction.putExtra("effectCode", EFFECTCODE.MIRROE.toInt());
                 startActivity(interaction);
             }
         });
@@ -123,31 +123,61 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         }
     };
 
+    private boolean cameraUsed() {
+        boolean flag = false;
+        Camera camera = null;
+
+        try {
+            camera = Camera.open();
+        } catch (Exception e) {
+            flag = true;
+        }
+        if (!flag){
+            camera.release();
+        }
+
+        return flag;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        camera = Camera.open();
-        camera.setDisplayOrientation(90);
-        camera.setPreviewCallback(previewCallback);
-        Log.d(TAG, "cam open");
+//        while (cameraUsed()){}
+        try {
+            Log.d(TAG, "cam open");
+            camera = Camera.open();
+            camera.setDisplayOrientation(90);
+            camera.setPreviewCallback(previewCallback);
+        } catch (Exception e) {
+
+        }
+
+        Log.d(TAG, "cam open end");
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        if (camera == null){
-            return;
-        }
-        camera.setPreviewCallback(null);
-        camera.stopPreview();
-        camera.release();
-        camera = null;
-        previewing = false;
-        Log.d(TAG,"cam close");
+//        Log.d(TAG,"cam close");
+//        if (camera == null){
+//            return;
+//        }
+//        camera.setPreviewCallback(null);
+//        camera.stopPreview();
+//        camera.release();
+//        camera = null;
+//        previewing = false;
+//        Log.d(TAG,"cam close end");
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "start");
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "resume");
         //load OpenCV engine and init OpenCV library
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
@@ -156,6 +186,36 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "pause");
+
+        Log.d(TAG,"cam close");
+        if (camera == null){
+            return;
+        }
+        camera.setPreviewCallback(null);
+        camera.stopPreview();
+        camera.release();
+        camera = null;
+        previewing = false;
+        Log.d(TAG,"cam close end");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();;
+        Log.d(TAG, "stop");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "destroy");
     }
 
     //OpenCV库加载并初始化成功后的回调函数

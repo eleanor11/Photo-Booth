@@ -6,12 +6,15 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
+import eleanor.photobooth.Functions.EFFECTCODE;
 import eleanor.photobooth.Functions.FunctionAccessor;
 import eleanor.photobooth.Functions.FunctionImpl;
 
@@ -21,6 +24,9 @@ import eleanor.photobooth.Functions.FunctionImpl;
 public class InteractionActivity extends Activity {
     FunctionAccessor fa = new FunctionImpl();
     private static final String TAG = "photo_booth";
+
+    Bitmap originPhoto;
+    Bitmap photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +45,35 @@ public class InteractionActivity extends Activity {
 //            Bitmap photo = bundle.getParcelable("bitmap");
 
             final String fn = intent.getStringExtra("interactionFileName");
-            Bitmap photo = fa.get_photo(fn);
+            originPhoto = fa.get_photo(fn);
+            photo = originPhoto;
 
             ImageView imageView = (ImageView) findViewById(R.id.imageInteraction);
             imageView.setImageBitmap(photo);
 
         }
+
+        ImageButton btn0 = (ImageButton) findViewById(R.id.btn_cancel);
+        btn0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(InteractionActivity.this, MainActivity.class);
+                interaction.putExtra("resultName", "");
+                interaction.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(interaction);
+            }
+        });
+
+        ImageButton btn1 = (ImageButton) findViewById(R.id.btn_OK);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(InteractionActivity.this, MainActivity.class);
+                interaction.putExtra("resultName", fa.save_photo(photo));
+                interaction.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(interaction);
+            }
+        });
 
     };
 

@@ -7,7 +7,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
-        android:id="@+id/all">
+        android:id="@+id/all"
+        android:background="@color/background">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -101,6 +102,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/imageView8"
+                android:src="@drawable/more"
                 android:layout_weight="0.33"
                 android:longClickable="false"
                 android:scaleType="fitXY" />

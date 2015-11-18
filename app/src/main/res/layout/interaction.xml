@@ -5,7 +5,8 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
         <ImageView
             android:layout_width="match_parent"
@@ -27,36 +28,38 @@
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.15"></FrameLayout>
+                android:layout_weight="0.3"></FrameLayout>
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:text="×"
                 android:id="@+id/btn_cancel"
+                android:src="@drawable/cancel"
                 style="@style/AppTheme"
                 android:clickable="false"
                 android:layout_gravity="left"
-                android:layout_weight="0.25" />
+                android:layout_weight="0.05"
+                android:scaleType="fitXY" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.2"></FrameLayout>
+                android:layout_weight="0.3"></FrameLayout>
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:text="√"
                 android:id="@+id/btn_OK"
+                android:src="@drawable/ok"
                 style="@style/AppTheme"
                 android:layout_gravity="right"
-                android:layout_weight="0.25" />
+                android:layout_weight="0.05"
+                android:scaleType="fitXY" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.15"></FrameLayout>
+                android:layout_weight="0.3"></FrameLayout>
 
         </LinearLayout>
 

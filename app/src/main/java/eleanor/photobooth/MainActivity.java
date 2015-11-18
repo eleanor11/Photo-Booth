@@ -34,8 +34,8 @@ public class MainActivity extends Activity {
 
     public static final String IMAGE_UNSPECIFIED = "image/*";
     ImageView imageView = null;
-    Button button0 = null;
-    Button button1 = null;
+    ImageButton button0 = null;
+    ImageButton button1 = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         imageView = (ImageView) findViewById(R.id.imageID);
-        button0 = (Button) findViewById(R.id.btn_01);
-        button1 = (Button) findViewById(R.id.btn_02);
+        button0 = (ImageButton) findViewById(R.id.btn_01);
+        button1 = (ImageButton) findViewById(R.id.btn_02);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            final String fn = intent.getStringExtra("resultName");
+            if (fn != null && !fn.equals("")) {
+                Bitmap photo = fa.get_photo(fn);
+                imageView.setImageBitmap(photo);
+            }
+        }
 
         button0.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,10 +67,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //Intent intent = fa.take_photo();
-
                 Intent chooseEffectDynamic = new Intent(MainActivity.this, ChooseEffectDynamicActivity.class);
                 startActivity(chooseEffectDynamic);
-
             }
         });
     }

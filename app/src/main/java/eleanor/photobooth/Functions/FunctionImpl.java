@@ -166,7 +166,7 @@ public class FunctionImpl implements FunctionAccessor {
     }
 
     @Override
-    public Bitmap mirror(Bitmap bitmap) {
+    public Bitmap mirrorUp(Bitmap bitmap) {
 
         Mat photo = convert_to_mat(bitmap);
 
@@ -183,5 +183,63 @@ public class FunctionImpl implements FunctionAccessor {
 
         return convert_to_bitmap(newPhoto);
     }
+
+    @Override
+    public Bitmap mirrorDown(Bitmap bitmap) {
+
+        Mat photo = convert_to_mat(bitmap);
+
+        Rect roi = new Rect(0, photo.height() / 2, photo.width(), photo.height() / 2);
+        Mat p2 = new Mat(photo, roi);
+        Mat p1 = new Mat();
+        Core.flip(p2, p1, 0);
+
+        Mat newPhoto = new Mat(p1.rows() + p2.rows(), p1.cols(), p1.type());;
+        Mat submit = newPhoto.rowRange(0, p1.rows());
+        p1.copyTo(submit);
+        submit = newPhoto.rowRange(p1.rows(), p1.rows() + p2.rows());
+        p2.copyTo(submit);
+
+        return convert_to_bitmap(newPhoto);
+    }
+
+    @Override
+    public Bitmap mirrorLeft(Bitmap bitmap) {
+
+        Mat photo = convert_to_mat(bitmap);
+
+        Rect roi = new Rect(0, 0, photo.width() / 2, photo.height());
+        Mat p1 = new Mat(photo, roi);
+        Mat p2 = new Mat();
+        Core.flip(p1, p2, 1);
+
+        Mat newPhoto = new Mat(p1.rows(), p1.cols() + p2.cols(), p1.type());;
+        Mat submit = newPhoto.colRange(0, p1.cols());
+        p1.copyTo(submit);
+        submit = newPhoto.colRange(p1.cols(), p1.cols() + p2.cols());
+        p2.copyTo(submit);
+
+        return convert_to_bitmap(newPhoto);
+    }
+
+    @Override
+    public Bitmap mirrorRight(Bitmap bitmap) {
+
+        Mat photo = convert_to_mat(bitmap);
+
+        Rect roi = new Rect(photo.width() / 2, 0, photo.width() / 2, photo.height());
+        Mat p2 = new Mat(photo, roi);
+        Mat p1 = new Mat();
+        Core.flip(p2, p1, 1);
+
+        Mat newPhoto = new Mat(p1.rows(), p1.cols() + p2.cols(), p1.type());;
+        Mat submit = newPhoto.colRange(0, p1.cols());
+        p1.copyTo(submit);
+        submit = newPhoto.colRange(p1.cols(), p1.cols() + p2.cols());
+        p2.copyTo(submit);
+
+        return convert_to_bitmap(newPhoto);
+    }
+
 
 }

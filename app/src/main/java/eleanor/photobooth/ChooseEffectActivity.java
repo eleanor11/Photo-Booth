@@ -62,17 +62,97 @@ public class ChooseEffectActivity extends Activity {
 
             //workout effects
             ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
-            final Bitmap bmpMirror = fa.mirror(originPhoto);
-            iv0.setImageBitmap(bmpMirror);
+            final Bitmap bmp0 = fa.mirrorRight(originPhoto);
+            iv0.setImageBitmap(bmp0);
             iv0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmpMirror);
+                    String nfn = fa.save_photo(bmp0);
                     interaction.putExtra("interactionFileName", nfn);
                     startActivity(interaction);
                 }
             });
+
+            ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
+            final Bitmap bmp1 = fa.mirrorUp(originPhoto);
+            iv1.setImageBitmap(bmp1);
+            iv1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp1);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
+            final Bitmap bmp2 = fa.mirrorLeft(originPhoto);
+            iv2.setImageBitmap(bmp2);
+            iv2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp2);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv3 = (ImageView) findViewById(R.id.imageView3);
+            final Bitmap bmp3 = fa.mirrorLeft(originPhoto);
+            iv3.setImageBitmap(bmp3);
+            iv3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp3);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
+            final Bitmap bmp5 = fa.mirrorRight(originPhoto);
+            iv5.setImageBitmap(bmp5);
+            iv5.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp5);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
+            final Bitmap bmp6 = fa.mirrorUp(originPhoto);
+            iv6.setImageBitmap(bmp6);
+            iv6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp6);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+            ImageView iv7 = (ImageView) findViewById(R.id.imageView7);
+            final Bitmap bmp7 = fa.mirrorDown(originPhoto);
+            iv7.setImageBitmap(bmp7);
+            iv7.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
+                    String nfn = fa.save_photo(bmp7);
+                    interaction.putExtra("interactionFileName", nfn);
+                    startActivity(interaction);
+                }
+            });
+
+
         }
 
     }
