@@ -27,4 +27,7 @@ public interface FunctionAccessor {
     Bitmap mirrorDown(Bitmap photo);
     Bitmap mirrorRight(Bitmap photo);
 
+    Bitmap addLineRow(Bitmap photo, int row);
+    Bitmap addLineCol(Bitmap photo, int col);
+
 }

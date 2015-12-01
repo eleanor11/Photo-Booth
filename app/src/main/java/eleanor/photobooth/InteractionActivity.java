@@ -45,11 +45,38 @@ public class InteractionActivity extends Activity {
 //            Bitmap photo = bundle.getParcelable("bitmap");
 
             final String fn = intent.getStringExtra("interactionFileName");
+            final int type = intent.getIntExtra("interactionType", 4);
             originPhoto = fa.get_photo(fn);
             photo = originPhoto;
 
             ImageView imageView = (ImageView) findViewById(R.id.imageInteraction);
-            imageView.setImageBitmap(photo);
+
+            switch (type) {
+                case 0:
+                    break;
+                case 1:
+                    imageView.setImageBitmap(fa.addLineRow(photo, -1));
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    imageView.setImageBitmap(fa.addLineCol(photo, -1));
+                    break;
+                case 4:
+                    imageView.setImageBitmap(photo);
+                    break;
+                case 5:
+                    imageView.setImageBitmap(fa.addLineCol(photo, -1));
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    imageView.setImageBitmap(fa.addLineRow(photo, -1));
+                    break;
+                default:
+                    imageView.setImageBitmap(photo);
+
+            }
 
         }
 

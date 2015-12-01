@@ -241,5 +241,54 @@ public class FunctionImpl implements FunctionAccessor {
         return convert_to_bitmap(newPhoto);
     }
 
+    @Override
+    public Bitmap addLineRow(Bitmap bitmap, int row){
+        Mat photo = convert_to_mat(bitmap);
+
+        if (row == -1) {
+            row = photo.rows() / 2;
+        }
+
+        double[] line = new double[4];
+        line[0] = 255.0;
+        line[1] = 0.0;
+        line[2] = 0.0;
+        line[3] = 255.0;
+
+        for (int i = 0; i < photo.cols(); i++) {
+            photo.put(row - 2, i, line);
+            photo.put(row - 1, i, line);
+            photo.put(row, i, line);
+            photo.put(row + 1, i, line);
+            photo.put(row + 2, i, line);
+        }
+
+        return convert_to_bitmap(photo);
+    }
+    @Override
+    public Bitmap addLineCol(Bitmap bitmap, int col){
+        Mat photo = convert_to_mat(bitmap);
+
+        if (col == -1) {
+            col = photo.cols() / 2;
+        }
+
+        double[] line = new double[4];
+        line[0] = 255.0;
+        line[1] = 0.0;
+        line[2] = 0.0;
+        line[3] = 255.0;
+
+        for (int i = 0; i < photo.rows(); i++) {
+            photo.put(i, col - 2, line);
+            photo.put(i, col - 1, line);
+            photo.put(i, col, line);
+            photo.put(i, col + 1, line);
+            photo.put(i, col + 2, line);
+        }
+
+        return convert_to_bitmap(photo);
+    }
+
 
 }

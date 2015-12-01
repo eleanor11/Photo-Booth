@@ -70,6 +70,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp0);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 0);
                     startActivity(interaction);
                 }
             });
@@ -83,6 +84,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 1);
                     startActivity(interaction);
                 }
             });
@@ -96,6 +98,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp2);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 2);
                     startActivity(interaction);
                 }
             });
@@ -109,6 +112,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp3);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 3);
                     startActivity(interaction);
                 }
             });
@@ -122,6 +126,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp5);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 5);
                     startActivity(interaction);
                 }
             });
@@ -135,6 +140,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp6);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 6);
                     startActivity(interaction);
                 }
             });
@@ -148,6 +154,7 @@ public class ChooseEffectActivity extends Activity {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     String nfn = fa.save_photo(bmp7);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("interactionType", 7);
                     startActivity(interaction);
                 }
             });
