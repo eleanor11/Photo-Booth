@@ -88,7 +88,7 @@ public class TestActivity extends Activity {
             if (extras != null) {
                 Bitmap photo = extras.getParcelable("data");
                 //ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);// 
+                //photo.compress(Bitmap.CompressFormat.JPEG, 75, stream);//
                 ImageView imageView = (ImageView) findViewById(R.id.imageID);
                 imageView.setImageBitmap(photo);
 
