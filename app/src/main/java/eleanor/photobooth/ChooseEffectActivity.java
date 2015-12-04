@@ -56,6 +56,7 @@ public class ChooseEffectActivity extends Activity {
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
                     interaction.putExtra("interactionFileName", fn);
+                    interaction.putExtra("originFileName", fn);
                     startActivity(interaction);
                 }
             });
@@ -68,8 +69,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp0);
+                    String nfn = fa.save_photo(bmp0, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 0);
                     startActivity(interaction);
                 }
@@ -82,8 +84,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp1);
+                    String nfn = fa.save_photo(bmp1, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 1);
                     startActivity(interaction);
                 }
@@ -96,8 +99,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp2);
+                    String nfn = fa.save_photo(bmp2, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 2);
                     startActivity(interaction);
                 }
@@ -110,8 +114,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp3);
+                    String nfn = fa.save_photo(bmp3, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 3);
                     startActivity(interaction);
                 }
@@ -124,8 +129,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp5);
+                    String nfn = fa.save_photo(bmp5, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 5);
                     startActivity(interaction);
                 }
@@ -138,8 +144,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp6);
+                    String nfn = fa.save_photo(bmp6, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 6);
                     startActivity(interaction);
                 }
@@ -152,8 +159,9 @@ public class ChooseEffectActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp7);
+                    String nfn = fa.save_photo(bmp7, 1);
                     interaction.putExtra("interactionFileName", nfn);
+                    interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 7);
                     startActivity(interaction);
                 }

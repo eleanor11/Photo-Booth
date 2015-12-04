@@ -18,16 +18,25 @@ public interface FunctionAccessor {
     Bitmap rescale_photo(Bitmap photo, int newWidth, int newHeight);
 
     String save_photo(Bitmap photo);
+    String save_photo(Bitmap photo, int opt);   //opt 0:ori, 1:tmp, other: date
     Bitmap get_photo(String fileName);
 
     Bitmap rotate_bitmap(Bitmap bitmap);
 
     Bitmap mirrorUp(Bitmap photo);
+    Bitmap mirrorUp(Bitmap photo, int row);
     Bitmap mirrorLeft(Bitmap photo);
+    Bitmap mirrorLeft(Bitmap photo, int col);
     Bitmap mirrorDown(Bitmap photo);
+    Bitmap mirrorDown(Bitmap photo, int row);
     Bitmap mirrorRight(Bitmap photo);
+    Bitmap mirrorRight(Bitmap photo, int col);
 
+    Bitmap addLineRow(Bitmap photo);
     Bitmap addLineRow(Bitmap photo, int row);
+    Bitmap addLineRow(Bitmap photo, int row, String color);
+    Bitmap addLineCol(Bitmap photo);
     Bitmap addLineCol(Bitmap photo, int col);
+    Bitmap addLineCol(Bitmap photo, int col, String color);
 
 }

@@ -25,7 +25,7 @@
                 android:layout_height="fill_parent"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitXY" />
 
         </FrameLayout>
 

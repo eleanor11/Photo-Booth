@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -25,13 +27,36 @@ public class InteractionActivity extends Activity {
     FunctionAccessor fa = new FunctionImpl();
     private static final String TAG = "photo_booth";
 
+    ImageView imageView;
+
+    int type = 4;
+
     Bitmap originPhoto;
     Bitmap photo;
+
+    Boolean longPress = false;
+    Boolean moveRow = false;
+    Boolean moveCol = false;
+    Boolean lineMoved = false;
+
+    int moveX, moveY;
+    int lineX, lineY;
+    int iWidth, iHeight;
+    int pWidth, pHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.interaction);
+
+        //load OpenCV engine and init OpenCV library
+        if (!OpenCVLoader.initDebug()) {
+            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            Log.d(TAG, "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -44,41 +69,95 @@ public class InteractionActivity extends Activity {
 //            Bundle bundle = intent.getExtras();
 //            Bitmap photo = bundle.getParcelable("bitmap");
 
-            final String fn = intent.getStringExtra("interactionFileName");
-            final int type = intent.getIntExtra("interactionType", 4);
+            final String fn = intent.getStringExtra("originFileName");
+            final String nfn = intent.getStringExtra("interactionFileName");
+            final int typeNo = intent.getIntExtra("interactionType", 4);
+
             originPhoto = fa.get_photo(fn);
-            photo = originPhoto;
-
-            ImageView imageView = (ImageView) findViewById(R.id.imageInteraction);
-
-            switch (type) {
-                case 0:
-                    break;
-                case 1:
-                    imageView.setImageBitmap(fa.addLineRow(photo, -1));
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    imageView.setImageBitmap(fa.addLineCol(photo, -1));
-                    break;
-                case 4:
-                    imageView.setImageBitmap(photo);
-                    break;
-                case 5:
-                    imageView.setImageBitmap(fa.addLineCol(photo, -1));
-                    break;
-                case 6:
-                    break;
-                case 7:
-                    imageView.setImageBitmap(fa.addLineRow(photo, -1));
-                    break;
-                default:
-                    imageView.setImageBitmap(photo);
-
-            }
+            photo = fa.get_photo(nfn);
+            type = typeNo;
 
         }
+
+        imageView = (ImageView) findViewById(R.id.imageInteraction);
+//        String nfn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_tmp.jpg";
+//        String fn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_ori.jpg";
+//        originPhoto = fa.get_photo(fn);
+//        photo = fa.get_photo(nfn);
+//        type = 1;
+
+        switch (type) {
+            case 0:
+                break;
+            case 1:
+                imageView.setImageBitmap(fa.addLineRow(photo));
+                break;
+            case 2:
+                break;
+            case 3:
+                imageView.setImageBitmap(fa.addLineCol(photo));
+                break;
+            case 4:
+                imageView.setImageBitmap(photo);
+                break;
+            case 5:
+                imageView.setImageBitmap(fa.addLineCol(photo));
+                break;
+            case 6:
+                break;
+            case 7:
+                imageView.setImageBitmap(fa.addLineRow(photo));
+                break;
+            default:
+                imageView.setImageBitmap(photo);
+
+        }
+
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d(TAG, "long click");
+                longPress = true;
+                lineMoved = false;
+                return false;
+            }
+        });
+
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int eventAction = event.getAction();
+                    switch (eventAction) {
+                        case MotionEvent.ACTION_DOWN:
+                            break;
+                        case MotionEvent.ACTION_UP:
+//                            Log.d(TAG, "up");
+                            longPress = false;
+                            moveRow = false;
+                            moveCol = false;
+
+                            if (lineMoved) {
+                                redrawPhoto();
+                                lineMoved = false;
+                            }
+
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            moveX = (int) event.getX();
+                            moveY = (int) event.getY();
+                            if (longPress) moveLine();
+//                            String t = "mx = " + Integer.toString(moveX) + " my = " + Integer.toString(moveY);
+//                            t += " xx = " + Integer.toString(lineX) + " yy = " + Integer.toString(lineY);
+//                            t += " ix = " + Integer.toString(imageView.getWidth()) + " iy = " + Integer.toString(imageView.getHeight());
+//                            Log.d(TAG, t);
+                            break;
+                        default:
+
+                    }
+                    return false;
+                }
+            });
+
 
         ImageButton btn0 = (ImageButton) findViewById(R.id.btn_cancel);
         btn0.setOnClickListener(new View.OnClickListener() {
@@ -96,13 +175,121 @@ public class InteractionActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent interaction = new Intent(InteractionActivity.this, MainActivity.class);
-                interaction.putExtra("resultName", fa.save_photo(photo));
+                interaction.putExtra("resultName", fa.save_photo(photo, 1));
                 interaction.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(interaction);
             }
         });
 
     };
+
+    void redrawPhoto() {
+        int row, col;
+        switch (type) {
+            case 0:
+                break;
+            case 1:
+//                Log.d(TAG, "redraw");
+                row = lineY * pHeight / iHeight;
+                photo = fa.mirrorUp(originPhoto, row);
+                imageView.setImageBitmap(fa.addLineRow(photo, row));
+                break;
+            case 2:
+                break;
+            case 3:
+                col = lineX * pWidth / iWidth;
+                photo = fa.mirrorLeft(originPhoto, col);
+                imageView.setImageBitmap(fa.addLineCol(photo, col));
+                break;
+            case 4:
+                break;
+            case 5:
+                col = lineX * pWidth / iWidth;
+                photo = fa.mirrorRight(originPhoto, originPhoto.getWidth() - col);
+                imageView.setImageBitmap(fa.addLineCol(photo, col));
+                break;
+            case 6:
+                break;
+            case 7:
+                row = lineY * pHeight / iHeight;
+                photo = fa.mirrorDown(originPhoto, originPhoto.getHeight() - row);
+                imageView.setImageBitmap(fa.addLineRow(photo, row));
+
+        }
+    }
+
+    void moveLine() {
+
+        int threshold = 7;
+        String color = "red";
+
+        switch (type){
+            case 0:
+
+                break;
+            case 1:
+//                Log.d(TAG, "case 1 " + Integer.toString(moveY) + " " + Integer.toString(lineY));
+                if (Math.abs(moveY - lineY) < threshold) {
+                    moveRow = true;
+                    lineMoved = true;
+                }
+                if (moveRow) {
+//                    Log.d(TAG, "in?");
+                    lineY = moveY;
+                    int row = lineY * pHeight / iHeight;
+//                    Log.d(TAG, Integer.toString(row));
+                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+
+                }
+                break;
+            case 2:
+
+                break;
+            case 3:
+                if (Math.abs(moveX - lineX) < threshold) {
+                    moveCol = true;
+                    lineMoved = true;
+                }
+                if (moveCol) {
+                    lineX = moveX;
+                    int col = lineX * pWidth / iWidth;
+                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+                }
+                break;
+            case 4:
+                break;
+            case 5:
+                if (Math.abs(moveX - lineX) < threshold) {
+                    moveCol = true;
+                    lineMoved = true;
+                }
+                if (moveCol) {
+                    lineX = moveX;
+                    int col = lineX * pWidth / iWidth;
+                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+                }
+                break;
+            case 6:
+
+                break;
+            case 7:
+                if (Math.abs(moveY - lineY) < threshold) {
+                    moveRow = true;
+                    lineMoved = true;
+                }
+                if (moveRow) {
+                    lineY = moveY;
+                    int row = lineY * pHeight / iHeight;
+                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+
+                }
+                break;
+
+
+
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -115,6 +302,27 @@ public class InteractionActivity extends Activity {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+
+
+
+    };
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        // TODO Auto-generated method stub
+        super.onWindowFocusChanged(hasFocus);
+
+        iWidth = imageView.getWidth();
+        iHeight = imageView.getHeight();
+
+        pWidth = photo.getWidth();
+        pHeight = photo.getHeight();
+
+        lineX = iWidth / 2;
+        lineY = iHeight / 2;
+        String t = "1 ix = " + Integer.toString(iWidth) + " iy = " + Integer.toString(iHeight);
+        Log.d(TAG, t);
+
     }
 
 

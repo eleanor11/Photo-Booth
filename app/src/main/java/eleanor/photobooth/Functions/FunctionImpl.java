@@ -94,13 +94,27 @@ public class FunctionImpl implements FunctionAccessor {
 
     @Override
     public String save_photo(Bitmap bitmap){
+        return save_photo(bitmap, -1);
+    }
+
+    @Override
+    public String save_photo(Bitmap bitmap, int opt){
 
 //        Log.d("result file height", Integer.toString(bitmap.getHeight()));
 //        Log.d("result file width", Integer.toString(bitmap.getWidth()));
 //        bitmap = rescale_photo(bitmap, 50, 50);
 
-        Date date = new Date();
-        String fileName = Environment.getExternalStorageDirectory().getPath() + "/" + Long.toString(date.getTime()) + ".jpg";
+        String fileName = Environment.getExternalStorageDirectory().getPath() + "/";
+        if (opt == 0){
+            fileName += "photo_booth_ori.jpg";
+        }
+        else if (opt == 1) {
+            fileName += "photo_booth_tmp.jpg";
+        }
+        else {
+            Date date = new Date();
+            fileName += Long.toString(date.getTime()) + ".jpg";
+        }
         File file = new File(fileName);
         FileOutputStream fout = null;
         try{
@@ -167,82 +181,190 @@ public class FunctionImpl implements FunctionAccessor {
 
     @Override
     public Bitmap mirrorUp(Bitmap bitmap) {
+        return mirrorUp(bitmap, bitmap.getHeight() / 2);
+    }
+
+    @Override
+    public Bitmap mirrorUp(Bitmap bitmap, int row) {
 
         Mat photo = convert_to_mat(bitmap);
 
-        Rect roi = new Rect(0, 0, photo.width(), photo.height() / 2);
+        Rect roi = new Rect(0, 0, photo.width(), row);
         Mat p1 = new Mat(photo, roi);
         Mat p2 = new Mat();
         Core.flip(p1, p2, 0);
 
-        Mat newPhoto = new Mat(p1.rows() + p2.rows(), p1.cols(), p1.type());;
-        Mat submit = newPhoto.rowRange(0, p1.rows());
-        p1.copyTo(submit);
-        submit = newPhoto.rowRange(p1.rows(), p1.rows() + p2.rows());
-        p2.copyTo(submit);
+        Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
+        Log.d("photo_booth", Integer.toString(newPhoto.width()) + " " + Integer.toString(newPhoto.height()));
+        Log.d("photo_booth", "row: " + Integer.toString(row));
+
+        int start = 0;
+        Mat submit;
+        while (start + row + row <= newPhoto.rows()) {
+            submit = newPhoto.rowRange(start, start + row);
+            p1.copyTo(submit);
+            submit = newPhoto.rowRange(start + row, start + row + row);
+            p2.copyTo(submit);
+            start += row + row;
+            Log.d("photo_booth", "start: " + Integer.toString(start));
+        }
+        if (start < newPhoto.rows()) {
+            roi = new Rect(0, 0, p1.width(), Math.min(row, newPhoto.rows() - start));
+            p1 = new Mat(p1, roi);
+            p1.copyTo(newPhoto.rowRange(start, start + p1.rows()));
+            start += p1.rows();
+            Log.d("photo_booth", "start: " + Integer.toString(start));
+            Log.d("photo_booth", "row: " + Integer.toString(p1.rows()));
+        }
+        if (start < newPhoto.rows()) {
+            roi = new Rect(0, 0, p2.width(), Math.min(row, newPhoto.rows() - start));
+            p2 = new Mat(p2, roi);
+            p2.copyTo(newPhoto.rowRange(start, start + p2.rows()));
+            start += p2.rows();
+            Log.d("photo_booth", "start: " + Integer.toString(start));
+            Log.d("photo_booth", "row: " + Integer.toString(p2.rows()));
+        }
 
         return convert_to_bitmap(newPhoto);
     }
 
     @Override
     public Bitmap mirrorDown(Bitmap bitmap) {
+        return mirrorDown(bitmap, bitmap.getHeight() / 2);
+    }
+
+    @Override
+    public Bitmap mirrorDown(Bitmap bitmap, int row) {
 
         Mat photo = convert_to_mat(bitmap);
 
-        Rect roi = new Rect(0, photo.height() / 2, photo.width(), photo.height() / 2);
-        Mat p2 = new Mat(photo, roi);
-        Mat p1 = new Mat();
-        Core.flip(p2, p1, 0);
+        Rect roi = new Rect(0, photo.height() - row, photo.width(), row);
+        Mat p1 = new Mat(photo, roi);
+        Mat p2 = new Mat();
+        Core.flip(p1, p2, 0);
 
-        Mat newPhoto = new Mat(p1.rows() + p2.rows(), p1.cols(), p1.type());;
-        Mat submit = newPhoto.rowRange(0, p1.rows());
-        p1.copyTo(submit);
-        submit = newPhoto.rowRange(p1.rows(), p1.rows() + p2.rows());
-        p2.copyTo(submit);
+        Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
+
+        int end = newPhoto.rows();
+        Mat submit;
+        while (end - row - row >= 0) {
+            submit = newPhoto.rowRange(end - row, end);
+            p1.copyTo(submit);
+            submit = newPhoto.rowRange(end - row - row, end - row);
+            p2.copyTo(submit);
+            end -= row + row;
+        }
+        if (end > 0) {
+            roi = new Rect(0, Math.max(0, row - end), p1.width(), Math.min(row, end));
+            p1 = new Mat(p1, roi);
+            p1.copyTo(newPhoto.rowRange(end - p1.rows(), end));
+            end -= p1.rows();
+        }
+        if (end > 0) {
+            roi = new Rect(0, Math.max(0, row - end), p1.width(), Math.min(row, end));
+            p2 = new Mat(p2, roi);
+            p2.copyTo(newPhoto.rowRange(end - p2.rows(), end));
+            end -= p2.rows();
+        }
+
 
         return convert_to_bitmap(newPhoto);
     }
 
     @Override
     public Bitmap mirrorLeft(Bitmap bitmap) {
+        return mirrorLeft(bitmap, bitmap.getWidth() / 2);
+    }
+
+    @Override
+    public Bitmap mirrorLeft(Bitmap bitmap, int col) {
 
         Mat photo = convert_to_mat(bitmap);
 
-        Rect roi = new Rect(0, 0, photo.width() / 2, photo.height());
+        Rect roi = new Rect(0, 0, col, photo.height());
         Mat p1 = new Mat(photo, roi);
         Mat p2 = new Mat();
         Core.flip(p1, p2, 1);
 
-        Mat newPhoto = new Mat(p1.rows(), p1.cols() + p2.cols(), p1.type());;
-        Mat submit = newPhoto.colRange(0, p1.cols());
-        p1.copyTo(submit);
-        submit = newPhoto.colRange(p1.cols(), p1.cols() + p2.cols());
-        p2.copyTo(submit);
+        Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
+
+        int start = 0;
+        Mat submit;
+        while (start + col + col <= newPhoto.cols()) {
+            submit = newPhoto.colRange(start, start + col);
+            p1.copyTo(submit);
+            submit = newPhoto.colRange(start + col, start + col + col);
+            p2.copyTo(submit);
+            start += col + col;
+        }
+        if (start < newPhoto.cols()) {
+            roi = new Rect(0, 0, Math.min(col, newPhoto.cols() - start), p1.height());
+            p1 = new Mat(p1, roi);
+            p1.copyTo(newPhoto.colRange(start, start + p1.cols()));
+            start += p1.cols();
+        }
+        if (start < newPhoto.cols()) {
+            roi = new Rect(0, 0, Math.min(col, newPhoto.cols() - start), p2.height());
+            p2 = new Mat(p2, roi);
+            p2.copyTo(newPhoto.colRange(start, start + p2.cols()));
+            start += p2.cols();
+        }
 
         return convert_to_bitmap(newPhoto);
     }
 
     @Override
     public Bitmap mirrorRight(Bitmap bitmap) {
+        return mirrorRight(bitmap, bitmap.getWidth() / 2);
+    }
+
+    @Override
+    public Bitmap mirrorRight(Bitmap bitmap, int col) {
 
         Mat photo = convert_to_mat(bitmap);
 
-        Rect roi = new Rect(photo.width() / 2, 0, photo.width() / 2, photo.height());
-        Mat p2 = new Mat(photo, roi);
-        Mat p1 = new Mat();
-        Core.flip(p2, p1, 1);
+        Rect roi = new Rect(photo.width() - col, 0, col, photo.height());
+        Mat p1 = new Mat(photo, roi);
+        Mat p2 = new Mat();
+        Core.flip(p1, p2, 1);
 
-        Mat newPhoto = new Mat(p1.rows(), p1.cols() + p2.cols(), p1.type());;
-        Mat submit = newPhoto.colRange(0, p1.cols());
-        p1.copyTo(submit);
-        submit = newPhoto.colRange(p1.cols(), p1.cols() + p2.cols());
-        p2.copyTo(submit);
+        Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
+
+        int end = newPhoto.cols();
+        Mat submit;
+        while (end - col - col >= 0) {
+            submit = newPhoto.colRange(end - col, end);
+            p1.copyTo(submit);
+            submit = newPhoto.colRange(end - col - col, end - col);
+            p2.copyTo(submit);
+            end -= col + col;
+        }
+        if (end > 0) {
+            roi = new Rect(Math.max(0, col - end), 0, Math.min(col, end), p1.height());
+            p1 = new Mat(p1, roi);
+            p1.copyTo(newPhoto.colRange(end - p1.cols(), end));;
+            end -= p1.cols();
+        }
+        if (end > 0) {
+            roi = new Rect(Math.max(0, col - end), 0, Math.min(col, end), p2.height());
+            p2 = new Mat(p2, roi);
+            p2.copyTo(newPhoto.colRange(end - p2.cols(), end));
+            end -= p2.cols();
+        }
 
         return convert_to_bitmap(newPhoto);
     }
 
     @Override
-    public Bitmap addLineRow(Bitmap bitmap, int row){
+    public Bitmap addLineRow(Bitmap bitmap) {
+        return addLineRow(bitmap, -1, "");
+    }
+    @Override
+    public Bitmap addLineRow(Bitmap bitmap, int row) {
+        return addLineRow(bitmap, row, "");
+    }
+    @Override
+    public Bitmap addLineRow(Bitmap bitmap, int row, String color){
         Mat photo = convert_to_mat(bitmap);
 
         if (row == -1) {
@@ -250,10 +372,18 @@ public class FunctionImpl implements FunctionAccessor {
         }
 
         double[] line = new double[4];
-        line[0] = 255.0;
-        line[1] = 0.0;
-        line[2] = 0.0;
-        line[3] = 255.0;
+        if (color.equals("red")) {
+            line[0] = 255.0;
+            line[1] = 0.0;
+            line[2] = 0.0;
+            line[3] = 255.0;
+        }
+        else {
+            line[0] = 0.0;
+            line[1] = 255.0;
+            line[2] = 255.0;
+            line[3] = 255.0;
+        }
 
         for (int i = 0; i < photo.cols(); i++) {
             photo.put(row - 2, i, line);
@@ -266,7 +396,15 @@ public class FunctionImpl implements FunctionAccessor {
         return convert_to_bitmap(photo);
     }
     @Override
-    public Bitmap addLineCol(Bitmap bitmap, int col){
+    public Bitmap addLineCol(Bitmap bitmap) {
+        return addLineCol(bitmap, -1, "");
+    }
+    @Override
+    public  Bitmap addLineCol(Bitmap bitmap, int col) {
+        return addLineCol(bitmap, col, "");
+    }
+    @Override
+    public Bitmap addLineCol(Bitmap bitmap, int col, String color){
         Mat photo = convert_to_mat(bitmap);
 
         if (col == -1) {
@@ -274,10 +412,18 @@ public class FunctionImpl implements FunctionAccessor {
         }
 
         double[] line = new double[4];
-        line[0] = 255.0;
-        line[1] = 0.0;
-        line[2] = 0.0;
-        line[3] = 255.0;
+        if (color.equals("red")) {
+            line[0] = 255.0;
+            line[1] = 0.0;
+            line[2] = 0.0;
+            line[3] = 255.0;
+        }
+        else {
+            line[0] = 0.0;
+            line[1] = 255.0;
+            line[2] = 255.0;
+            line[3] = 255.0;
+        }
 
         for (int i = 0; i < photo.rows(); i++) {
             photo.put(i, col - 2, line);
