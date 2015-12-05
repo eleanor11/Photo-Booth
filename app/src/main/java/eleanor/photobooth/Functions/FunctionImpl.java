@@ -14,8 +14,12 @@ import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.imgcodecs.*;
+import org.opencv.video.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.Boost;
 
@@ -23,7 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
-
 import eleanor.photobooth.R;
 
 /**
@@ -179,11 +182,14 @@ public class FunctionImpl implements FunctionAccessor {
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
+
+    /*
+    * mirror
+    * */
     @Override
     public Bitmap mirrorUp(Bitmap bitmap) {
         return mirrorUp(bitmap, bitmap.getHeight() / 2);
     }
-
     @Override
     public Bitmap mirrorUp(Bitmap bitmap, int row) {
 
@@ -227,12 +233,10 @@ public class FunctionImpl implements FunctionAccessor {
 
         return convert_to_bitmap(newPhoto);
     }
-
     @Override
     public Bitmap mirrorDown(Bitmap bitmap) {
         return mirrorDown(bitmap, bitmap.getHeight() / 2);
     }
-
     @Override
     public Bitmap mirrorDown(Bitmap bitmap, int row) {
 
@@ -270,12 +274,10 @@ public class FunctionImpl implements FunctionAccessor {
 
         return convert_to_bitmap(newPhoto);
     }
-
     @Override
     public Bitmap mirrorLeft(Bitmap bitmap) {
         return mirrorLeft(bitmap, bitmap.getWidth() / 2);
     }
-
     @Override
     public Bitmap mirrorLeft(Bitmap bitmap, int col) {
 
@@ -312,12 +314,10 @@ public class FunctionImpl implements FunctionAccessor {
 
         return convert_to_bitmap(newPhoto);
     }
-
     @Override
     public Bitmap mirrorRight(Bitmap bitmap) {
         return mirrorRight(bitmap, bitmap.getWidth() / 2);
     }
-
     @Override
     public Bitmap mirrorRight(Bitmap bitmap, int col) {
 
@@ -355,9 +355,17 @@ public class FunctionImpl implements FunctionAccessor {
         return convert_to_bitmap(newPhoto);
     }
 
+
+    /*
+    * add line
+    * */
+
+    double white[] = {255.0, 255.0, 255.0, 255.0};
+    double red[] = {255.0, 0.0, 0.0, 255.0};
+
     @Override
     public Bitmap addLineRow(Bitmap bitmap) {
-        return addLineRow(bitmap, -1, "");
+        return addLineRow(bitmap, bitmap.getHeight() / 2, "");
     }
     @Override
     public Bitmap addLineRow(Bitmap bitmap, int row) {
@@ -367,37 +375,25 @@ public class FunctionImpl implements FunctionAccessor {
     public Bitmap addLineRow(Bitmap bitmap, int row, String color){
         Mat photo = convert_to_mat(bitmap);
 
-        if (row == -1) {
-            row = photo.rows() / 2;
+        double[] line = white;
+        if (color.equals("red")) {
+            line = red;
         }
 
-        double[] line = new double[4];
-        if (color.equals("red")) {
-            line[0] = 255.0;
-            line[1] = 0.0;
-            line[2] = 0.0;
-            line[3] = 255.0;
-        }
-        else {
-            line[0] = 0.0;
-            line[1] = 255.0;
-            line[2] = 255.0;
-            line[3] = 255.0;
-        }
+        int sj = Math.max(0, row - 2);
+        int ej = Math.min(row + 2, photo.rows());
 
         for (int i = 0; i < photo.cols(); i++) {
-            photo.put(row - 2, i, line);
-            photo.put(row - 1, i, line);
-            photo.put(row, i, line);
-            photo.put(row + 1, i, line);
-            photo.put(row + 2, i, line);
+            for (int j = sj; j < ej; j++){
+                photo.put(j, i, line);
+            }
         }
 
         return convert_to_bitmap(photo);
     }
     @Override
     public Bitmap addLineCol(Bitmap bitmap) {
-        return addLineCol(bitmap, -1, "");
+        return addLineCol(bitmap, bitmap.getWidth() / 2, "");
     }
     @Override
     public  Bitmap addLineCol(Bitmap bitmap, int col) {
@@ -407,34 +403,264 @@ public class FunctionImpl implements FunctionAccessor {
     public Bitmap addLineCol(Bitmap bitmap, int col, String color){
         Mat photo = convert_to_mat(bitmap);
 
-        if (col == -1) {
-            col = photo.cols() / 2;
+        double[] line = white;
+        if (color.equals("red")) {
+            line = red;
         }
 
-        double[] line = new double[4];
-        if (color.equals("red")) {
-            line[0] = 255.0;
-            line[1] = 0.0;
-            line[2] = 0.0;
-            line[3] = 255.0;
-        }
-        else {
-            line[0] = 0.0;
-            line[1] = 255.0;
-            line[2] = 255.0;
-            line[3] = 255.0;
-        }
+        int sj = Math.max(0, col - 2);
+        int ej = Math.min(col + 2, photo.cols());
 
         for (int i = 0; i < photo.rows(); i++) {
-            photo.put(i, col - 2, line);
-            photo.put(i, col - 1, line);
-            photo.put(i, col, line);
-            photo.put(i, col + 1, line);
-            photo.put(i, col + 2, line);
+            for (int j = sj; j < ej; j++) {
+                photo.put(i, j, line);
+            }
         }
 
         return convert_to_bitmap(photo);
     }
 
+
+    /*
+    * stretch & squeeze
+    * */
+
+    int scaleDefault = 500;         //default
+
+    @Override
+    public Bitmap stretch(Bitmap bitmap){
+        return stretch(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scaleDefault);
+    }
+    @Override
+    public Bitmap stretch(Bitmap bitmap, int scale){
+        return stretch(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scale);
+    }
+    @Override
+    public Bitmap stretch(Bitmap bitmap, int px, int py){
+        return stretch(bitmap, px, py, scaleDefault);
+    }
+    @Override
+    public Bitmap stretch(Bitmap bitmap, int px, int py, int scale){
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        byte[] tmp = new byte[4];
+
+//        Log.d("photo_booth", "stretch " + Integer.toString(width) + " " + Integer.toString(height) + " " + Integer.toString(px) + " " + Integer.toString(py)) ;;
+//        Mat mc = new MatOfPoint(center);
+        int sy = Math.max(0, py - scale);
+        int ey = Math.min(py + scale, height);
+        for (int y = sy; y < ey; y++) {
+//            Log.d("photo_booth", "pointy " + Integer.toString(y));
+            int dx = (int) Math.sqrt((double) ((scale * scale) - (y -py) * (y - py)));
+            int sx = Math.max(0, px - dx);
+            int ex = Math.min(px + dx, width);
+            for (int x = sx; x < ex; x++) {
+//                Mat sb = new Mat();           //so many mats need several seconds to solve
+//                Core.subtract(new MatOfPoint(new Point(x, y)), mc, sb);
+//                int dis = (int) Core.norm(sb);
+                int dis = (int) Math.sqrt((double) ((x - px) * (x - px) + (y - py) * (y - py)));
+                int newX = (int) ((x - px) * dis / scale + px);
+                int newY = (int) ((y - py) * dis / scale + py);
+
+                if (newX < width && newX >= 0 && newY < height && newY >= 0) {
+                    photo.get(newY, newX, tmp);
+                    newPhoto.put(y, x, tmp);
+                }
+
+//                if (dis < scale) {
+//                    Log.d("photo_booth", "put");
+//
+//                    int newX = (int) ((x - px) * dis / scale + px);
+//                    int newY = (int) ((y - py) * dis / scale + py);
+//
+//                    if (newX < width && newY < height) {
+//                        newPhoto.put(y, x, photo.get(newY, newX));
+//                    }
+//
+//                }
+            }
+        }
+
+//        Log.d("photo_booth", "stretch end");
+
+        return convert_to_bitmap(newPhoto);
+    }
+    @Override
+    public Bitmap squeeze(Bitmap bitmap){
+        return squeeze(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scaleDefault);
+    }
+    @Override
+    public Bitmap squeeze(Bitmap bitmap, int scale){
+        return squeeze(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scale);
+    }
+    @Override
+    public Bitmap squeeze(Bitmap bitmap, int px, int py){
+        return squeeze(bitmap, px, py, scaleDefault);
+    }
+    @Override
+    public Bitmap squeeze(Bitmap bitmap, int px, int py, int scale){
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        byte[] tmp = new byte[4];
+
+        int sy = Math.max(0, py - scale);
+        int ey = Math.min(py + scale, height);
+        for (int y = sy; y < ey; y++) {
+
+            int dx = (int) Math.sqrt((double) ((scale * scale) - (y -py) * (y - py)));
+            int sx = Math.max(0, px - dx);
+            int ex = Math.min(px + dx, width);
+
+            for (int x = sx; x < ex; x++) {
+
+                double dis = Math.sqrt((double) ((x - px) * (x - px) + (y - py) * (y - py)));
+                int r = (int) (Math.sqrt(dis) * 16);
+
+                double theta = Math.atan2((float)(y - py), (float)(x - px));
+                int newX = (int) (r * Math.cos(theta)) + px;
+                int newY = (int) (r * Math.sin(theta)) + py;
+
+                if (newX < width && newX >= 0 && newY < height && newY >= 0) {
+                    photo.get(newY, newX, tmp);
+                    newPhoto.put(y, x, tmp);
+                }
+
+            }
+        }
+
+        return convert_to_bitmap(newPhoto);
+    }
+
+
+    /*
+    * add cercle
+    * */
+    @Override
+    public Bitmap addCircle(Bitmap bitmap){
+        return addCircle(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scaleDefault, "");
+    }
+
+    @Override
+    public Bitmap addCircle(Bitmap bitmap, int scale){
+        return addCircle(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scale, "");
+    }
+    @Override
+    public Bitmap addCircle(Bitmap bitmap, int px, int py){
+        return addCircle(bitmap, px, py, scaleDefault, "");
+    }
+    @Override
+    public Bitmap addCircle(Bitmap bitmap, int px, int py, int scale){
+        return addCircle(bitmap, px, py, scale, "");
+    }
+    @Override
+    public Bitmap addCircle(Bitmap bitmap, int px, int py, int scale, String color){
+        Mat photo = convert_to_mat(bitmap);
+
+        double[] circle = white;
+        if (color.equals("red")) {
+            circle = red;
+        }
+
+        int scale1 = scale - 2;
+        int scale2 = scale + 2;
+
+        int sy = Math.max(0, py - scale);
+        int ey = Math.min(py + scale, photo.rows());
+        for (int y = sy; y < ey; y++) {
+            int dx1 = (int) Math.sqrt((double) ((scale1 * scale1) - (y -py) * (y - py)));
+            int dx2 = (int) Math.sqrt((double) ((scale2 * scale2) - (y -py) * (y - py)));
+
+            int sx,ex;
+            sx = Math.max(0, px - dx2);
+            ex = Math.max(0, px - dx1);
+            for (int x = sx; x < ex; x++) {
+                photo.put(y, x, circle);
+            }
+            sx = Math.min(px + dx1, photo.cols());
+            ex = Math.min(px + dx2, photo.cols());
+            for (int x = sx; x < ex; x++) {
+                photo.put(y, x, circle);
+            }
+
+        }
+
+        return convert_to_bitmap(photo);
+    }
+
+    /*
+    * kaleidoscope
+    * */
+
+    private float triangle(float x) {
+        float r = x % 1.0f;
+        return 2.0f * (r < 0.5 ? r : 1 - r);
+    }
+
+    @Override
+    public Bitmap kaleidoscope(Bitmap bitmap){
+        return kaleidoscope(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scaleDefault);
+    }
+    @Override
+    public Bitmap kaleidoscope(Bitmap bitmap, int scale){
+        return kaleidoscope(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, scale);
+    }
+    @Override
+    public Bitmap kaleidoscope(Bitmap bitmap, int px, int py){
+        return kaleidoscope(bitmap, px, py, scaleDefault);
+    }
+    @Override
+    public Bitmap kaleidoscope(Bitmap bitmap, int px, int py, int scale){
+        Mat photo = convert_to_mat(bitmap);
+
+        Mat newPhoto = new Mat(photo.size(),photo.type());
+        photo.copyTo(newPhoto);
+
+        double angle = Math.PI / 4;
+        double angle2 = Math.PI / 4;
+        int sides = 10;
+        byte[] tmp = new byte[4];
+        
+        for (int y = 0; y < photo.height(); y++) {
+            for (int x = 0; x < photo.width(); x++) {
+                int dx = x - px;
+                int dy = y - py;
+                double r = Math.sqrt(dx * dx + dy * dy);
+                double theta = Math.atan2(dy, dx) - angle - angle2;
+                theta = triangle( (float) (theta / Math.PI * sides * 0.5));
+
+                double c = Math.cos(theta);
+                double radiusc = scale / c;
+                r = radiusc * triangle((float) (r / radiusc));
+
+                theta += angle;
+
+                double xx = r * Math.cos(theta) + px;
+                double yy = r * Math.sin(theta) + py;
+                xx = Math.max(0, Math.min(xx, photo.width() - 1));
+                yy = Math.max(0, Math.min(yy, photo.height() - 1));
+
+                double x1 = Math.floor(xx);
+                double y1 = Math.floor(yy);
+                double p = xx - x1;
+                double q = yy - y1;
+
+//                // TODO: 2015/12/6  
+//                newPhoto.put(x, y, )
+
+            }
+        }
+
+        return convert_to_bitmap(photo);
+    }
 
 }

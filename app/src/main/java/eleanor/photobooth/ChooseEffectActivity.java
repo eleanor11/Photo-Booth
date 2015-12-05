@@ -63,7 +63,7 @@ public class ChooseEffectActivity extends Activity {
 
             //workout effects
             ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
-            final Bitmap bmp0 = fa.mirrorRight(originPhoto);
+            final Bitmap bmp0 = fa.squeeze(originPhoto);
             iv0.setImageBitmap(bmp0);
             iv0.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,7 +93,7 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
-            final Bitmap bmp2 = fa.mirrorLeft(originPhoto);
+            final Bitmap bmp2 = fa.stretch(originPhoto);
             iv2.setImageBitmap(bmp2);
             iv2.setOnClickListener(new View.OnClickListener() {
                 @Override

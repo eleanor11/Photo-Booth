@@ -39,8 +39,13 @@ public class InteractionActivity extends Activity {
     Boolean moveCol = false;
     Boolean lineMoved = false;
 
+    Boolean moveCircle = false;
+    Boolean circleMoved = false;
+
+    int circleScale = 500;
+
     int moveX, moveY;
-    int lineX, lineY;
+    int pointX, pointY;
     int iWidth, iHeight;
     int pWidth, pHeight;
 
@@ -60,39 +65,44 @@ public class InteractionActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            //byte[] bis = intent.getByteArrayExtra("bitmap");
-            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
-
-            //String picturePath = intent.getParcelableExtra("string");
-            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
-
-//            Bundle bundle = intent.getExtras();
-//            Bitmap photo = bundle.getParcelable("bitmap");
-
-            final String fn = intent.getStringExtra("originFileName");
-            final String nfn = intent.getStringExtra("interactionFileName");
-            final int typeNo = intent.getIntExtra("interactionType", 4);
-
-            originPhoto = fa.get_photo(fn);
-            photo = fa.get_photo(nfn);
-            type = typeNo;
+//            //byte[] bis = intent.getByteArrayExtra("bitmap");
+//            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
+//
+//            //String picturePath = intent.getParcelableExtra("string");
+//            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
+//
+////            Bundle bundle = intent.getExtras();
+////            Bitmap photo = bundle.getParcelable("bitmap");
+//
+//            final String fn = intent.getStringExtra("originFileName");
+//            final String nfn = intent.getStringExtra("interactionFileName");
+//            final int typeNo = intent.getIntExtra("interactionType", 4);
+//
+//            originPhoto = fa.get_photo(fn);
+//            photo = fa.get_photo(nfn);
+//            type = typeNo;
 
         }
 
         imageView = (ImageView) findViewById(R.id.imageInteraction);
-//        String nfn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_tmp.jpg";
-//        String fn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_ori.jpg";
-//        originPhoto = fa.get_photo(fn);
-//        photo = fa.get_photo(nfn);
-//        type = 1;
+
+        if (true) {
+            String nfn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_tmp.jpg";
+            String fn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_ori.jpg";
+            originPhoto = fa.get_photo(fn);
+            photo = fa.squeeze(originPhoto);
+            type = 0;
+        }
 
         switch (type) {
             case 0:
+                imageView.setImageBitmap(fa.addCircle(photo));
                 break;
             case 1:
                 imageView.setImageBitmap(fa.addLineRow(photo));
                 break;
             case 2:
+                imageView.setImageBitmap(fa.addCircle(photo));
                 break;
             case 3:
                 imageView.setImageBitmap(fa.addLineCol(photo));
@@ -116,9 +126,10 @@ public class InteractionActivity extends Activity {
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Log.d(TAG, "long click");
+//                Log.d(TAG, "long click");
                 longPress = true;
                 lineMoved = false;
+                circleMoved = false;
                 return false;
             }
         });
@@ -129,23 +140,31 @@ public class InteractionActivity extends Activity {
                 int eventAction = event.getAction();
                     switch (eventAction) {
                         case MotionEvent.ACTION_DOWN:
+//                            Log.d(TAG, "down");
                             break;
                         case MotionEvent.ACTION_UP:
 //                            Log.d(TAG, "up");
-                            longPress = false;
+//                            longPress = false;
                             moveRow = false;
                             moveCol = false;
-
                             if (lineMoved) {
                                 redrawPhoto();
                                 lineMoved = false;
                             }
 
+                            moveCircle = false;
+                            if (circleMoved) {
+                                redrawPhoto();
+                                circleMoved = false;
+                            }
+
                             break;
                         case MotionEvent.ACTION_MOVE:
+//                            Log.d(TAG, "move");
                             moveX = (int) event.getX();
                             moveY = (int) event.getY();
-                            if (longPress) moveLine();
+                            //if (longPress)
+                            moveLine();
 //                            String t = "mx = " + Integer.toString(moveX) + " my = " + Integer.toString(moveY);
 //                            t += " xx = " + Integer.toString(lineX) + " yy = " + Integer.toString(lineY);
 //                            t += " ix = " + Integer.toString(imageView.getWidth()) + " iy = " + Integer.toString(imageView.getHeight());
@@ -184,37 +203,49 @@ public class InteractionActivity extends Activity {
     };
 
     void redrawPhoto() {
-        int row, col;
         switch (type) {
-            case 0:
+            case 0: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.squeeze(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
                 break;
-            case 1:
+            }
+            case 1: {
 //                Log.d(TAG, "redraw");
-                row = lineY * pHeight / iHeight;
+                int row = pointY * pHeight / iHeight;
                 photo = fa.mirrorUp(originPhoto, row);
                 imageView.setImageBitmap(fa.addLineRow(photo, row));
                 break;
-            case 2:
+            }
+            case 2: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.stretch(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
                 break;
-            case 3:
-                col = lineX * pWidth / iWidth;
+            }
+            case 3: {
+                int col = pointX * pWidth / iWidth;
                 photo = fa.mirrorLeft(originPhoto, col);
                 imageView.setImageBitmap(fa.addLineCol(photo, col));
                 break;
+            }
             case 4:
                 break;
-            case 5:
-                col = lineX * pWidth / iWidth;
+            case 5: {
+                int col = pointX * pWidth / iWidth;
                 photo = fa.mirrorRight(originPhoto, originPhoto.getWidth() - col);
                 imageView.setImageBitmap(fa.addLineCol(photo, col));
                 break;
+            }
             case 6:
                 break;
-            case 7:
-                row = lineY * pHeight / iHeight;
+            case 7: {
+                int row = pointY * pHeight / iHeight;
                 photo = fa.mirrorDown(originPhoto, originPhoto.getHeight() - row);
                 imageView.setImageBitmap(fa.addLineRow(photo, row));
-
+            }
         }
     }
 
@@ -222,70 +253,147 @@ public class InteractionActivity extends Activity {
 
         int threshold = 7;
         String color = "red";
+        int dis;
+        Log.d(TAG, "type " + Integer.toString(type));
 
-        switch (type){
-            case 0:
+        switch (type) {
+            case 0: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+
+//                if (Math.abs(moveX - pointX) >= threshold || Math.abs(moveY - pointY) >= threshold) {
+//                    break;
+//                }
+//                dis = (int) Math.sqrt((moveX - pointX) * (moveX - pointX) + (moveY - pointY) * (moveY - pointY));
+//                if (Math.abs(dis - circleScale) < threshold) {
+//                    moveCircle = true;
+//                    circleMoved = true;
+//                }
+//                if (moveCircle) {
+//                    pointX = moveX;
+//                    pointY = moveY;
+//
+//                    int px = pointX * pWidth / iWidth;
+//                    int py = pointY * pHeight / iHeight;
+//                    imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+//                }
 
                 break;
-            case 1:
-//                Log.d(TAG, "case 1 " + Integer.toString(moveY) + " " + Integer.toString(lineY));
-                if (Math.abs(moveY - lineY) < threshold) {
-                    moveRow = true;
-                    lineMoved = true;
-                }
-                if (moveRow) {
-//                    Log.d(TAG, "in?");
-                    lineY = moveY;
-                    int row = lineY * pHeight / iHeight;
-//                    Log.d(TAG, Integer.toString(row));
-                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+            }
+            case 1: {
+                Log.d(TAG, "case 1 " + Integer.toString(moveY) + " " + Integer.toString(pointY));
 
-                }
+                lineMoved = true;
+                pointY = moveY;
+                int row = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+
+//                if (Math.abs(moveY - pointY) < threshold) {
+//                    moveRow = true;
+//                    lineMoved = true;
+//                }
+//                if (moveRow) {
+////                    Log.d(TAG, "in?");
+//                    pointY = moveY;
+//                    int row = pointY * pHeight / iHeight;
+////                    Log.d(TAG, Integer.toString(row));
+//                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+//
+//                }
                 break;
-            case 2:
+            }
+            case 2: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+
+//                if (Math.abs(moveX - pointX) >= threshold || Math.abs(moveY - pointY) >= threshold) {
+//                    break;
+//                }
+//                dis = (int) Math.sqrt((moveX - pointX) * (moveX - pointX) + (moveY - pointY) * (moveY - pointY));
+//                if (Math.abs(dis - circleScale) < threshold) {
+//                    moveCircle = true;
+//                    circleMoved = true;
+//                }
+//                if (moveCircle) {
+//                    pointX = moveX;
+//                    pointY = moveY;
+//
+//                    int px = pointX * pWidth / iWidth;
+//                    int py = pointY * pHeight / iHeight;
+//                    imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+//                }
 
                 break;
-            case 3:
-                if (Math.abs(moveX - lineX) < threshold) {
-                    moveCol = true;
-                    lineMoved = true;
-                }
-                if (moveCol) {
-                    lineX = moveX;
-                    int col = lineX * pWidth / iWidth;
-                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
-                }
+            }
+            case 3: {
+                lineMoved = true;
+                pointX = moveX;
+                int col = pointX * pWidth / iWidth;
+                imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+
+//                if (Math.abs(moveX - pointX) < threshold) {
+//                    moveCol = true;
+//                    lineMoved = true;
+//                }
+//                if (moveCol) {
+//                    pointX = moveX;
+//                    int col = pointX * pWidth / iWidth;
+//                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+//                }
                 break;
+
+            }
+
+
             case 4:
                 break;
-            case 5:
-                if (Math.abs(moveX - lineX) < threshold) {
-                    moveCol = true;
-                    lineMoved = true;
-                }
-                if (moveCol) {
-                    lineX = moveX;
-                    int col = lineX * pWidth / iWidth;
-                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
-                }
+            case 5:{
+                lineMoved = true;
+                pointX = moveX;
+                int col = pointX * pWidth / iWidth;
+                imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+
+//                if (Math.abs(moveX - pointX) < threshold) {
+//                    moveCol = true;
+//                    lineMoved = true;
+//                }
+//                if (moveCol) {
+//                    pointX = moveX;
+//                    int col = pointX * pWidth / iWidth;
+//                    imageView.setImageBitmap(fa.addLineCol(photo, col, color));
+//                }
                 break;
+            }
             case 6:
 
                 break;
-            case 7:
-                if (Math.abs(moveY - lineY) < threshold) {
-                    moveRow = true;
-                    lineMoved = true;
-                }
-                if (moveRow) {
-                    lineY = moveY;
-                    int row = lineY * pHeight / iHeight;
-                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+            case 7: {
+                lineMoved = true;
+                pointY = moveY;
+                int row = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addLineRow(photo, row, color));
 
-                }
+//                if (Math.abs(moveY - pointY) < threshold) {
+//                    moveRow = true;
+//                    lineMoved = true;
+//                }
+//                if (moveRow) {
+//                    pointY = moveY;
+//                    int row = pointY * pHeight / iHeight;
+//                    imageView.setImageBitmap(fa.addLineRow(photo, row, color));
+//
+//                }
                 break;
 
-
+            }
 
         }
     }
@@ -318,8 +426,8 @@ public class InteractionActivity extends Activity {
         pWidth = photo.getWidth();
         pHeight = photo.getHeight();
 
-        lineX = iWidth / 2;
-        lineY = iHeight / 2;
+        pointX = iWidth / 2;
+        pointY = iHeight / 2;
         String t = "1 ix = " + Integer.toString(iWidth) + " iy = " + Integer.toString(iHeight);
         Log.d(TAG, t);
 

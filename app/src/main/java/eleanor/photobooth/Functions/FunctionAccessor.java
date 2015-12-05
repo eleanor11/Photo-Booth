@@ -39,4 +39,24 @@ public interface FunctionAccessor {
     Bitmap addLineCol(Bitmap photo, int col);
     Bitmap addLineCol(Bitmap photo, int col, String color);
 
+    Bitmap stretch(Bitmap photo);
+    Bitmap stretch(Bitmap photo, int scale);
+    Bitmap stretch(Bitmap photo, int px, int py);
+    Bitmap stretch(Bitmap photo, int px, int py, int scale);
+    Bitmap squeeze(Bitmap photo);
+    Bitmap squeeze(Bitmap photo, int scale);
+    Bitmap squeeze(Bitmap photo, int px, int py);
+    Bitmap squeeze(Bitmap photo, int px, int py, int scale);
+
+    Bitmap addCircle(Bitmap photo);
+    Bitmap addCircle(Bitmap photo, int scale);
+    Bitmap addCircle(Bitmap photo, int px, int py);
+    Bitmap addCircle(Bitmap photo, int px, int py, int scale);
+    Bitmap addCircle(Bitmap photo, int px, int py, int scale, String color);
+
+    Bitmap kaleidoscope(Bitmap photo);
+    Bitmap kaleidoscope(Bitmap photo, int scale);
+    Bitmap kaleidoscope(Bitmap photo, int px, int py);
+    Bitmap kaleidoscope(Bitmap photo, int px, int py, int scale);
+
 }
