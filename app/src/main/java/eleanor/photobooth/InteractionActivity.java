@@ -212,7 +212,7 @@ public class InteractionActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent interaction = new Intent(InteractionActivity.this, MainActivity.class);
-                interaction.putExtra("resultName", fa.save_photo(photo, 1));
+                interaction.putExtra("resultName", fa.save_photo(photo));
                 interaction.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(interaction);
             }
@@ -456,8 +456,8 @@ public class InteractionActivity extends Activity {
 
         pointX = iWidth / 2;
         pointY = iHeight / 2;
-        String t = "1 ix = " + Integer.toString(iWidth) + " iy = " + Integer.toString(iHeight);
-        Log.d(TAG, t);
+//        String t = "1 ix = " + Integer.toString(iWidth) + " iy = " + Integer.toString(iHeight);
+//        Log.d(TAG, t);
 
     }
 
