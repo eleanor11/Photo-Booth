@@ -55,21 +55,88 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
     }
 
     private void workoutEffects(){
-        ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
         if (originPhoto == null){
             Log.d(TAG, "origin photo null");
             return;
         }
 //        Log.d(TAG, Integer.toString(originPhoto.getHeight()));
 //        Log.d(TAG, Integer.toString(originPhoto.getWidth()));
-        iv0.setImageBitmap(originPhoto);
-        final Bitmap bmpMirror = fa.mirrorUp(originPhoto);
-        iv0.setImageBitmap(bmpMirror);
+
+        Bitmap smallPhoto = fa.rescale_photo(originPhoto, 0.3f);
+
+        ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
+        iv0.setImageBitmap(fa.squeeze(smallPhoto));
         iv0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("effectCode", EFFECTCODE.MIRROE.toInt());
+                interaction.putExtra("interactionType", 0);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
+        iv1.setImageBitmap(fa.mirrorUp(smallPhoto));
+        iv1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 1);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
+        iv2.setImageBitmap(fa.stretch(smallPhoto));
+        iv2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 2);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv3 = (ImageView) findViewById(R.id.imageView3);
+        iv3.setImageBitmap(fa.mirrorLeft(smallPhoto));
+        iv3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 3);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
+        iv5.setImageBitmap(fa.mirrorRight(smallPhoto));
+        iv5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 5);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
+        iv6.setImageBitmap(fa.kaleidoscope(smallPhoto));
+        iv6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 6);
+                startActivity(interaction);
+            }
+        });
+
+        ImageView iv7 = (ImageView) findViewById(R.id.imageView7);
+        iv7.setImageBitmap(fa.mirrorDown(smallPhoto));
+        iv7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 7);
                 startActivity(interaction);
             }
         });

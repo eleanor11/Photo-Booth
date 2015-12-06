@@ -29,6 +29,7 @@ public class ChooseEffectActivity extends Activity {
     FunctionAccessor fa = new FunctionImpl();
     private static final String TAG = "photo_booth";
     Bitmap originPhoto;
+    Bitmap smallPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +49,19 @@ public class ChooseEffectActivity extends Activity {
 
             final String fn = intent.getStringExtra("fileName");
             originPhoto = fa.get_photo(fn);
+            smallPhoto = fa.rescale_photo(originPhoto, 0.3f);
+
+            Log.d(TAG, "chooseeffectstart");
+//            Log.d(TAG, "choose" + Integer.toString(originPhoto.getHeight()));
+//            Log.d(TAG, "choose" + Integer.toString(originPhoto.getWidth()));
 
             ImageView iv4 = (ImageView) findViewById(R.id.imageView4);
-            iv4.setImageBitmap(originPhoto);
+            iv4.setImageBitmap(smallPhoto);
             iv4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    interaction.putExtra("interactionFileName", fn);
+//                    interaction.putExtra("interactionFileName", fn);
                     interaction.putExtra("originFileName", fn);
                     startActivity(interaction);
                 }
@@ -63,14 +69,14 @@ public class ChooseEffectActivity extends Activity {
 
             //workout effects
             ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
-            final Bitmap bmp0 = fa.squeeze(originPhoto);
+            final Bitmap bmp0 = fa.squeeze(smallPhoto);
             iv0.setImageBitmap(bmp0);
             iv0.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp0, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.squeeze(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 0);
                     startActivity(interaction);
@@ -78,14 +84,14 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
-            final Bitmap bmp1 = fa.mirrorUp(originPhoto);
+            final Bitmap bmp1 = fa.mirrorUp(smallPhoto);
             iv1.setImageBitmap(bmp1);
             iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp1, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.mirrorUp(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 1);
                     startActivity(interaction);
@@ -93,14 +99,14 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
-            final Bitmap bmp2 = fa.stretch(originPhoto);
+            final Bitmap bmp2 = fa.stretch(smallPhoto);
             iv2.setImageBitmap(bmp2);
             iv2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp2, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.stretch(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 2);
                     startActivity(interaction);
@@ -108,14 +114,14 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv3 = (ImageView) findViewById(R.id.imageView3);
-            final Bitmap bmp3 = fa.mirrorLeft(originPhoto);
+            final Bitmap bmp3 = fa.mirrorLeft(smallPhoto);
             iv3.setImageBitmap(bmp3);
             iv3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp3, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.mirrorLeft(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 3);
                     startActivity(interaction);
@@ -123,14 +129,14 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
-            final Bitmap bmp5 = fa.mirrorRight(originPhoto);
+            final Bitmap bmp5 = fa.mirrorRight(smallPhoto);
             iv5.setImageBitmap(bmp5);
             iv5.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp5, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.mirrorRight(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 5);
                     startActivity(interaction);
@@ -138,14 +144,14 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
-            final Bitmap bmp6 = fa.mirrorUp(originPhoto);
+            final Bitmap bmp6 = fa.kaleidoscope(smallPhoto);
             iv6.setImageBitmap(bmp6);
             iv6.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp6, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.kaleidoscope(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 6);
                     startActivity(interaction);
@@ -153,21 +159,21 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv7 = (ImageView) findViewById(R.id.imageView7);
-            final Bitmap bmp7 = fa.mirrorDown(originPhoto);
+            final Bitmap bmp7 = fa.mirrorDown(smallPhoto);
             iv7.setImageBitmap(bmp7);
             iv7.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent interaction = new Intent(ChooseEffectActivity.this, InteractionActivity.class);
-                    String nfn = fa.save_photo(bmp7, 1);
-                    interaction.putExtra("interactionFileName", nfn);
+//                    String nfn = fa.save_photo(fa.mirrorDown(originPhoto), 1);
+//                    interaction.putExtra("interactionFileName", nfn);
                     interaction.putExtra("originFileName", fn);
                     interaction.putExtra("interactionType", 7);
                     startActivity(interaction);
                 }
             });
 
-
+            Log.d(TAG, "chooseeffectend");
         }
 
     }

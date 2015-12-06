@@ -15,6 +15,7 @@ public interface FunctionAccessor {
     Intent get_photo_from_album();
     Intent zoom_photo(Uri uri, boolean fixed);
 
+    Bitmap rescale_photo(Bitmap photo, float scale);
     Bitmap rescale_photo(Bitmap photo, int newWidth, int newHeight);
 
     String save_photo(Bitmap photo);
@@ -40,23 +41,27 @@ public interface FunctionAccessor {
     Bitmap addLineCol(Bitmap photo, int col, String color);
 
     Bitmap stretch(Bitmap photo);
-    Bitmap stretch(Bitmap photo, int scale);
+    Bitmap stretch(Bitmap photo, float ratio);
     Bitmap stretch(Bitmap photo, int px, int py);
-    Bitmap stretch(Bitmap photo, int px, int py, int scale);
+    Bitmap stretch(Bitmap photo, int px, int py, float ratio);
     Bitmap squeeze(Bitmap photo);
-    Bitmap squeeze(Bitmap photo, int scale);
+    Bitmap squeeze(Bitmap photo, float ratio);
     Bitmap squeeze(Bitmap photo, int px, int py);
-    Bitmap squeeze(Bitmap photo, int px, int py, int scale);
+    Bitmap squeeze(Bitmap photo, int px, int py, float ratio);
 
     Bitmap addCircle(Bitmap photo);
-    Bitmap addCircle(Bitmap photo, int scale);
+    Bitmap addCircle(Bitmap photo, float ratio);
     Bitmap addCircle(Bitmap photo, int px, int py);
-    Bitmap addCircle(Bitmap photo, int px, int py, int scale);
-    Bitmap addCircle(Bitmap photo, int px, int py, int scale, String color);
+    Bitmap addCircle(Bitmap photo, int px, int py, float ratio);
+    Bitmap addCircle(Bitmap photo, int px, int py, float ratio, String color);
 
     Bitmap kaleidoscope(Bitmap photo);
-    Bitmap kaleidoscope(Bitmap photo, int scale);
+    Bitmap kaleidoscope(Bitmap photo, float ratio);
     Bitmap kaleidoscope(Bitmap photo, int px, int py);
-    Bitmap kaleidoscope(Bitmap photo, int px, int py, int scale);
+    Bitmap kaleidoscope(Bitmap photo, int px, int py, float ratio);
+
+    Bitmap addPoint(Bitmap photo);
+    Bitmap addPoint(Bitmap photo, int px, int py);
+    Bitmap addPoint(Bitmap photo, int px, int py, String color);
 
 }

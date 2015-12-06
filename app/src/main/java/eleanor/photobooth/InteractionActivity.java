@@ -42,7 +42,9 @@ public class InteractionActivity extends Activity {
     Boolean moveCircle = false;
     Boolean circleMoved = false;
 
-    int circleScale = 500;
+    Boolean pointMoved = false;
+
+    float circleScale = 0.3f;
 
     int moveX, moveY;
     int pointX, pointY;
@@ -65,60 +67,70 @@ public class InteractionActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent != null) {
-//            //byte[] bis = intent.getByteArrayExtra("bitmap");
-//            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
-//
-//            //String picturePath = intent.getParcelableExtra("string");
-//            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
-//
-////            Bundle bundle = intent.getExtras();
-////            Bitmap photo = bundle.getParcelable("bitmap");
-//
-//            final String fn = intent.getStringExtra("originFileName");
+            //byte[] bis = intent.getByteArrayExtra("bitmap");
+            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
+
+            //String picturePath = intent.getParcelableExtra("string");
+            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
+
+//            Bundle bundle = intent.getExtras();
+//            Bitmap photo = bundle.getParcelable("bitmap");
+
+            final String fn = intent.getStringExtra("originFileName");
+            final int typeNo = intent.getIntExtra("interactionType", 4);
 //            final String nfn = intent.getStringExtra("interactionFileName");
-//            final int typeNo = intent.getIntExtra("interactionType", 4);
-//
-//            originPhoto = fa.get_photo(fn);
+
+            originPhoto = fa.get_photo(fn);
+            type = typeNo;
 //            photo = fa.get_photo(nfn);
-//            type = typeNo;
 
         }
 
         imageView = (ImageView) findViewById(R.id.imageInteraction);
 
-        if (true) {
-            String nfn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_tmp.jpg";
+        if (false) {
+//            String nfn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_tmp.jpg";
             String fn = Environment.getExternalStorageDirectory().getPath() + "/photo_booth_ori.jpg";
             originPhoto = fa.get_photo(fn);
-            photo = fa.squeeze(originPhoto);
-            type = 0;
+            photo = fa.kaleidoscope(originPhoto);
+            type = 6;
         }
 
         switch (type) {
             case 0:
+                photo = fa.squeeze(originPhoto);
                 imageView.setImageBitmap(fa.addCircle(photo));
                 break;
             case 1:
+                photo = fa.mirrorUp(originPhoto);
                 imageView.setImageBitmap(fa.addLineRow(photo));
                 break;
             case 2:
+                photo = fa.stretch(originPhoto);
                 imageView.setImageBitmap(fa.addCircle(photo));
                 break;
             case 3:
+                photo = fa.mirrorLeft(originPhoto);
                 imageView.setImageBitmap(fa.addLineCol(photo));
                 break;
             case 4:
+                photo = originPhoto;
                 imageView.setImageBitmap(photo);
                 break;
             case 5:
+                photo = fa.mirrorRight(originPhoto);
                 imageView.setImageBitmap(fa.addLineCol(photo));
                 break;
             case 6:
+                photo = fa.kaleidoscope(originPhoto);
+                imageView.setImageBitmap(fa.addPoint(photo));
                 break;
             case 7:
+                photo = fa.mirrorDown(originPhoto);
                 imageView.setImageBitmap(fa.addLineRow(photo));
                 break;
             default:
+                photo = originPhoto;
                 imageView.setImageBitmap(photo);
 
         }
@@ -130,6 +142,7 @@ public class InteractionActivity extends Activity {
                 longPress = true;
                 lineMoved = false;
                 circleMoved = false;
+                pointMoved = false;
                 return false;
             }
         });
@@ -156,6 +169,11 @@ public class InteractionActivity extends Activity {
                             if (circleMoved) {
                                 redrawPhoto();
                                 circleMoved = false;
+                            }
+
+                            if (pointMoved) {
+                                redrawPhoto();;
+                                pointMoved = false;
                             }
 
                             break;
@@ -239,8 +257,13 @@ public class InteractionActivity extends Activity {
                 imageView.setImageBitmap(fa.addLineCol(photo, col));
                 break;
             }
-            case 6:
+            case 6:{
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.kaleidoscope(originPhoto, px, py);
+                imageView.setImageBitmap(fa.addPoint(photo, px, py));
                 break;
+            }
             case 7: {
                 int row = pointY * pHeight / iHeight;
                 photo = fa.mirrorDown(originPhoto, originPhoto.getHeight() - row);
@@ -373,7 +396,12 @@ public class InteractionActivity extends Activity {
                 break;
             }
             case 6:
-
+                pointMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addPoint(photo, px, py, color));
                 break;
             case 7: {
                 lineMoved = true;

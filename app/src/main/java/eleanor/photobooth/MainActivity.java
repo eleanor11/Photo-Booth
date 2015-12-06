@@ -125,6 +125,7 @@ public class MainActivity extends Activity {
 //            bundle.putParcelable("bitmap", bitmap);
 //            chooseEffect.putExtras(bundle);
 
+            bitmap = fa.rescale_photo(bitmap, 0.5f);
             String fn = fa.save_photo(bitmap, 0);
             chooseEffect.putExtra("fileName", fn);
 
