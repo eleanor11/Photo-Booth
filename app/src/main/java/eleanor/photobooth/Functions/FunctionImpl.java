@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Random;
+
 import eleanor.photobooth.R;
 
 /**
@@ -551,6 +553,265 @@ public class FunctionImpl implements FunctionAccessor {
         return convert_to_bitmap(newPhoto);
     }
 
+    /*
+    * water
+    * */
+    @Override
+    public Bitmap water(Bitmap bitmap){
+        return water(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap water(Bitmap bitmap, float ratio){
+        return water(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratio);
+    }
+    @Override
+    public Bitmap water(Bitmap bitmap, int px, int py){
+        return water(bitmap, px, py, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap water(Bitmap bitmap, int px, int py, float ratio){
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+//        Log.d("photo_booth", "water " + Integer.toString(width) + " " + Integer.toString(height));
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        int wavelength = (int) (40 * height / 1024);
+        int amplitude = (int) (5 * height / 1024);
+//        Log.d("photo_booth", "water " + Integer.toString(wavelength) + " " + Integer.toString(amplitude));
+
+        int radius = (int) (ratio * Math.min(width, height));
+
+        Log.d("photo_booth", "waterstart");
+        int sy = Math.max(0, py - radius);
+        int ey = Math.min(py + radius, height);
+        for (int y = sy; y < ey; y++) {
+            int rx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
+            int sx = Math.max(0, px - rx);
+            int ex = Math.min(px + rx, width);
+            for (int x = sx; x < ex; x++) {
+                int dx = x - px;
+                int dy = y - py;
+
+                double dis = Math.sqrt((double) (dx * dx + dy * dy));
+                double amount = amplitude * Math.sin(dis / wavelength * Math.PI * 2);
+                amount *= (radius - dis) / radius;
+                if (dis != 0) amount *= (double)wavelength / dis;
+
+
+                int newX = (int) (x + amount * dx);
+                int newY = (int) (y + amount * dy);
+                newX = Math.max(0, Math.min(newX, width - 1));
+                newY = Math.max(0, Math.min(newY, height - 1))
+                ;
+//                Log.d("water", Integer.toString(x) + " " + Integer.toString(y) + Integer.toString(newX) + " " + Integer.toString(newY));
+                newPhoto.put(y, x, photo.get(newY, newX));
+
+            }
+        }
+
+        Log.d("photo_booth", "waterend");
+        return convert_to_bitmap(newPhoto);
+    }
+
+
+    /*
+    * twirl
+    * */
+
+    @Override
+    public Bitmap twirl(Bitmap bitmap){
+        return twirl(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap twirl(Bitmap bitmap, float ratio){
+        return twirl(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratio);
+    }
+    @Override
+    public Bitmap twirl(Bitmap bitmap, int px, int py){
+        return twirl(bitmap, px, py, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap twirl(Bitmap bitmap, int px, int py, float ratio){
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        double angle = Math.PI / 2;
+
+        int radius = (int) (ratio * Math.min(width, height));
+
+        int sy = Math.max(0, py - radius);
+        int ey = Math.min(py + radius, height);
+        for (int y = sy; y < ey; y++) {
+            int dx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
+            int sx = Math.max(0, px - dx);
+            int ex = Math.min(px + dx, width);
+            for (int x = sx; x < ex; x++) {
+                double dis = Math.sqrt((double) ((x - px) * (x - px) + (y - py) * (y - py)));
+
+                double a = Math.atan2((y - py), (x - px)) + angle * (radius - dis) / radius;
+
+                int newX = (int) (px + dis * Math.cos(a));
+                int newY = (int) (py + dis * Math.sin(a));
+                newX = Math.max(0, Math.min(newX, width - 1));
+                newY = Math.max(0, Math.min(newY, height - 1));
+
+                newPhoto.put(y, x, photo.get(newY, newX));
+
+            }
+        }
+
+        return convert_to_bitmap(newPhoto);
+    }
+
+    /*
+    * ripple
+    * */
+
+
+    @Override
+    public Bitmap ripple(Bitmap bitmap, int type){
+        return ripple(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratioScaleDefault, type);
+    }
+    @Override
+    public Bitmap ripple(Bitmap bitmap, float ratio, int type){
+        return ripple(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratio, type);
+    }
+    @Override
+    public Bitmap ripple(Bitmap bitmap, int px, int py, int type){
+        return ripple(bitmap, px, py, ratioScaleDefault, type);
+    }
+    @Override
+    public Bitmap ripple(Bitmap bitmap, int px, int py, float ratio, int type){
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        double xAmplitude = 25.0;
+        double yAmplitude = 25.0;
+        double xWavelength = 32.0;
+        double yWavelength = 32.0;
+
+        int radius = (int) (ratio * Math.min(width, height));
+
+        int sy = Math.max(0, py - radius);
+        int ey = Math.min(py + radius, height);
+        for (int y = sy; y < ey; y++) {
+            int dx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
+            int sx = Math.max(0, px - dx);
+            int ex = Math.min(px + dx, width);
+            for (int x = sx; x < ex; x++) {
+                double nx = (double)y / xWavelength;
+                double ny = (double)x / yWavelength;
+                double fx, fy;
+
+                switch (type) {
+                    case 0:
+                        fx = Math.sin(nx);
+                        fy = Math.sin(ny);
+                        break;
+                    case 1:
+                        fx = mod(nx, 1);
+                        fy = mod(ny, 1);
+                        break;
+                    case 2:
+                        fx = triangle(nx);
+                        fy = triangle(ny);
+                        break;
+                    default:
+                        fx = Math.sin(nx);
+                        fy = Math.sin(ny);
+                        break;
+                }
+
+                int newX = (int) (x + xAmplitude * fx);
+                int newY = (int) (y + yAmplitude * fy);
+                newX = Math.max(0, Math.min(newX, width - 1));
+                newY = Math.max(0, Math.min(newY, height - 1));
+
+                newPhoto.put(y, x, photo.get(newY, newX));
+
+            }
+        }
+
+        return convert_to_bitmap(newPhoto);
+    }
+
+    /*
+    * mosaic
+    * */
+
+    @Override
+    public Bitmap mosaic(Bitmap bitmap){
+        return mosaic(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap mosaic(Bitmap bitmap, float ratio){
+        return mosaic(bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, ratio);
+    }
+    @Override
+    public Bitmap mosaic(Bitmap bitmap, int px, int py){
+        return mosaic(bitmap, px, py, ratioScaleDefault);
+    }
+    @Override
+    public Bitmap mosaic(Bitmap bitmap, int px, int py, float ratio){
+        if (true)
+        return bitmap;
+
+        Mat photo = convert_to_mat(bitmap);
+
+        int width = photo.cols();
+        int height = photo.rows();
+        Mat newPhoto = new Mat(photo.size(), photo.type());
+        photo.copyTo(newPhoto);
+
+        int size = 9;
+
+        int radius = (int) (ratio * Math.min(width, height));
+
+        Log.d("photo_booth", "mosaicstart");
+        int sy = Math.max(size, py - radius);
+        int ey = Math.min(py + radius, height - size);
+        for (int y = sy; y < ey; y += size) {
+            int dx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
+            int sx = Math.max(size, px - dx);
+            int ex = Math.min(px + dx, width - size);
+            for (int x = sx; x < ex; x += size) {
+
+                double k1 = (double)(Math.random() % 100) / 100.0 - 0.5;
+                double k2 = (double)(Math.random() % 100) / 100.0 - 0.5;
+                double m = k1 * (size * 2 - 1);
+                double n = k1 * (size * 2 - 1);
+
+                int newY = (int) (y + m) % height;
+                int newX = (int) (x + n) % width;
+                newX = Math.max(0, Math.min(newX, width - 1));
+                newY = Math.max(0, Math.min(newY, height - 1));
+
+                double[] tmp = photo.get(newY, newX);
+                for (int yy = y - size; yy <= y + size; yy++) {
+                    for (int xx = x - size; xx <= x + size; x++) {
+                        newPhoto.put(yy, xx, tmp);
+                    }
+                }
+
+
+            }
+        }
+
+        Log.d("photo_booth", "mosaicend");
+        return convert_to_bitmap(newPhoto);
+    }
+
 
     /*
     * add cercle
@@ -614,11 +875,15 @@ public class FunctionImpl implements FunctionAccessor {
 
     float ratioRadiusDefault = 0.25f;
 
-    private float triangle(float x) {
-        float r = x % 1.0f;
+    private double mod(double x, double y) {
+        double r = x % 1.0f;
         if (r < 0) {
-            r += 1.0;
+            r += 1;
         }
+        return r;
+    }
+    private double triangle(double x) {
+        double r = mod(x, 1);
         return 2.0f * (r < 0.5 ? r : 1 - r);
     }
 

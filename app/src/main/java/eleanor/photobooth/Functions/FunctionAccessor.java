@@ -49,6 +49,26 @@ public interface FunctionAccessor {
     Bitmap squeeze(Bitmap photo, int px, int py);
     Bitmap squeeze(Bitmap photo, int px, int py, float ratio);
 
+    Bitmap water(Bitmap photo);
+    Bitmap water(Bitmap photo, float ratio);
+    Bitmap water(Bitmap photo, int px, int py);
+    Bitmap water(Bitmap photo, int px, int py, float ratio);
+
+    Bitmap twirl(Bitmap photo);
+    Bitmap twirl(Bitmap photo, float ratio);
+    Bitmap twirl(Bitmap photo, int px, int py);
+    Bitmap twirl(Bitmap photo, int px, int py, float ratio);
+
+    Bitmap ripple(Bitmap photo, int type);
+    Bitmap ripple(Bitmap photo, float ratio, int type);
+    Bitmap ripple(Bitmap photo, int px, int py, int type);
+    Bitmap ripple(Bitmap photo, int px, int py, float ratio, int type);
+
+    Bitmap mosaic(Bitmap photo);
+    Bitmap mosaic(Bitmap photo, float ratio);
+    Bitmap mosaic(Bitmap photo, int px, int py);
+    Bitmap mosaic(Bitmap photo, int px, int py, float ratio);
+
     Bitmap addCircle(Bitmap photo);
     Bitmap addCircle(Bitmap photo, float ratio);
     Bitmap addCircle(Bitmap photo, int px, int py);

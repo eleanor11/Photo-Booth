@@ -67,23 +67,14 @@ public class InteractionActivity extends Activity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            //byte[] bis = intent.getByteArrayExtra("bitmap");
-            //Bitmap photo=BitmapFactory.decodeByteArray(bis, 0, bis.length);
-
-            //String picturePath = intent.getParcelableExtra("string");
-            //Bitmap photo = BitmapFactory.decodeFile(picturePath);
-
-//            Bundle bundle = intent.getExtras();
-//            Bitmap photo = bundle.getParcelable("bitmap");
 
             final String fn = intent.getStringExtra("originFileName");
             final int typeNo = intent.getIntExtra("interactionType", 4);
-//            final String nfn = intent.getStringExtra("interactionFileName");
 
             originPhoto = fa.get_photo(fn);
             type = typeNo;
-//            photo = fa.get_photo(nfn);
 
+//            Log.d(TAG, "ori interaction" + Integer.toString(originPhoto.getWidth()) + " " + Integer.toString(originPhoto.getHeight()));
         }
 
         imageView = (ImageView) findViewById(R.id.imageInteraction);
@@ -129,6 +120,33 @@ public class InteractionActivity extends Activity {
                 photo = fa.mirrorDown(originPhoto);
                 imageView.setImageBitmap(fa.addLineRow(photo));
                 break;
+            case 9:
+                photo = fa.water(originPhoto);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 10:
+                photo = fa.twirl(originPhoto);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 11:
+                photo = fa.ripple(originPhoto, 0);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 12:
+                photo = fa.ripple(originPhoto, 1);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 13:
+                photo = originPhoto;
+                imageView.setImageBitmap(photo);
+                break;
+            case 14:
+                photo = fa.ripple(originPhoto, 2);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+
+
+
             default:
                 photo = originPhoto;
                 imageView.setImageBitmap(photo);
@@ -269,6 +287,48 @@ public class InteractionActivity extends Activity {
                 photo = fa.mirrorDown(originPhoto, originPhoto.getHeight() - row);
                 imageView.setImageBitmap(fa.addLineRow(photo, row));
             }
+            case 9: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.water(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 10: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.twirl(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 11: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 0);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 12: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 1);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 14: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 2);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 15: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.mosaic(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
         }
     }
 
@@ -395,7 +455,7 @@ public class InteractionActivity extends Activity {
 //                }
                 break;
             }
-            case 6:
+            case 6: {
                 pointMoved = true;
                 pointX = moveX;
                 pointY = moveY;
@@ -403,6 +463,7 @@ public class InteractionActivity extends Activity {
                 int py = pointY * pHeight / iHeight;
                 imageView.setImageBitmap(fa.addPoint(photo, px, py, color));
                 break;
+            }
             case 7: {
                 lineMoved = true;
                 pointY = moveY;
@@ -421,6 +482,60 @@ public class InteractionActivity extends Activity {
 //                }
                 break;
 
+            }
+            case 9: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 10: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 11: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 12: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 14: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 15: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
             }
 
         }

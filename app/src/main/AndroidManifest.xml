@@ -36,6 +36,10 @@
             android:label="Photo Booth">
         </activity>
 
+        <activity android:name=".ChooseEffectActivity2"
+            android:label="Photo Booth">
+        </activity>
+
         <activity android:name=".ChooseEffectDynamicActivity"
             android:label="Photo Booth">
         </activity>
