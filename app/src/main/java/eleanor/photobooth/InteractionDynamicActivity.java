@@ -276,10 +276,11 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                 imageView.setImageBitmap(fa.addLineCol(photo, col));
                 break;
             }
-            case 4:
+            case 4: {
                 photo = originPhoto;
                 imageView.setImageBitmap(photo);
                 break;
+            }
             case 5: {
                 int col = pointX * pWidth / iWidth;
                 photo = fa.mirrorRight(originPhoto, originPhoto.getWidth() - col);
@@ -325,6 +326,11 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                 int py = pointY * pHeight / iHeight;
                 photo = fa.ripple(originPhoto, px, py, circleScale, 1);
                 imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 13: {
+                photo = originPhoto;
+                imageView.setImageBitmap(photo);
                 break;
             }
             case 14: {

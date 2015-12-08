@@ -106,6 +106,16 @@ public class ChooseEffectDynamicActivity2 extends Activity  implements SurfaceHo
             }
         });
 
+        SurfaceView sv4 = (SurfaceView) findViewById(R.id.surfaceView4);
+        sv4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 13);
+                startActivity(interaction);
+            }
+        });
+
         ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
         iv5.setImageBitmap(fa.ripple(smallPhoto, 2));
         iv5.setOnClickListener(new View.OnClickListener() {

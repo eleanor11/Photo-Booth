@@ -342,7 +342,7 @@ public class InteractionActivity extends Activity {
         int threshold = 7;
         String color = "red";
         int dis;
-        Log.d(TAG, "type " + Integer.toString(type));
+//        Log.d(TAG, "type " + Integer.toString(type));
 
         switch (type) {
             case 0: {

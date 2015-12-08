@@ -208,8 +208,10 @@ public class FunctionImpl implements FunctionAccessor {
         Core.flip(p1, p2, 0);
 
         Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
-        Log.d("photo_booth", Integer.toString(newPhoto.width()) + " " + Integer.toString(newPhoto.height()));
-        Log.d("photo_booth", "row: " + Integer.toString(row));
+//        Log.d("photo_booth", Integer.toString(newPhoto.width()) + " " + Integer.toString(newPhoto.height()));
+//        Log.d("photo_booth", "row: " + Integer.toString(row));
+
+        Log.d("photo_booth", "mirror start");
 
         int start = 0;
         Mat submit;
@@ -219,24 +221,25 @@ public class FunctionImpl implements FunctionAccessor {
             submit = newPhoto.rowRange(start + row, start + row + row);
             p2.copyTo(submit);
             start += row + row;
-            Log.d("photo_booth", "start: " + Integer.toString(start));
+//            Log.d("photo_booth", "start: " + Integer.toString(start));
         }
         if (start < newPhoto.rows()) {
             roi = new Rect(0, 0, p1.width(), Math.min(row, newPhoto.rows() - start));
             p1 = new Mat(p1, roi);
             p1.copyTo(newPhoto.rowRange(start, start + p1.rows()));
             start += p1.rows();
-            Log.d("photo_booth", "start: " + Integer.toString(start));
-            Log.d("photo_booth", "row: " + Integer.toString(p1.rows()));
+//            Log.d("photo_booth", "start: " + Integer.toString(start));
+//            Log.d("photo_booth", "row: " + Integer.toString(p1.rows()));
         }
         if (start < newPhoto.rows()) {
             roi = new Rect(0, 0, p2.width(), Math.min(row, newPhoto.rows() - start));
             p2 = new Mat(p2, roi);
             p2.copyTo(newPhoto.rowRange(start, start + p2.rows()));
             start += p2.rows();
-            Log.d("photo_booth", "start: " + Integer.toString(start));
-            Log.d("photo_booth", "row: " + Integer.toString(p2.rows()));
+//            Log.d("photo_booth", "start: " + Integer.toString(start));
+//            Log.d("photo_booth", "row: " + Integer.toString(p2.rows()));
         }
+        Log.d("photo_booth", "mirror end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -256,6 +259,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
 
+        Log.d("photo_booth", "mirror start");
         int end = newPhoto.rows();
         Mat submit;
         while (end - row - row >= 0) {
@@ -277,6 +281,7 @@ public class FunctionImpl implements FunctionAccessor {
             p2.copyTo(newPhoto.rowRange(end - p2.rows(), end));
             end -= p2.rows();
         }
+        Log.d("photo_booth", "mirror end");
 
 
         return convert_to_bitmap(newPhoto);
@@ -297,6 +302,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
 
+        Log.d("photo_booth", "mirror start");
         int start = 0;
         Mat submit;
         while (start + col + col <= newPhoto.cols()) {
@@ -318,6 +324,7 @@ public class FunctionImpl implements FunctionAccessor {
             p2.copyTo(newPhoto.colRange(start, start + p2.cols()));
             start += p2.cols();
         }
+        Log.d("photo_booth", "mirror end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -337,6 +344,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         Mat newPhoto = new Mat(photo.rows(), photo.cols(), photo.type());
 
+        Log.d("photo_booth", "mirror start");
         int end = newPhoto.cols();
         Mat submit;
         while (end - col - col >= 0) {
@@ -358,6 +366,7 @@ public class FunctionImpl implements FunctionAccessor {
             p2.copyTo(newPhoto.colRange(end - p2.cols(), end));
             end -= p2.cols();
         }
+        Log.d("photo_booth", "mirror end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -461,6 +470,7 @@ public class FunctionImpl implements FunctionAccessor {
 
 //        Log.d("photo_booth", "stretch " + Integer.toString(width) + " " + Integer.toString(height) + " " + Integer.toString(px) + " " + Integer.toString(py)) ;;
 //        Mat mc = new MatOfPoint(center);
+        Log.d("photo_booth", "stretch start");
         int sy = Math.max(0, py - scale);
         int ey = Math.min(py + scale, height);
         for (int y = sy; y < ey; y++) {
@@ -495,7 +505,7 @@ public class FunctionImpl implements FunctionAccessor {
             }
         }
 
-//        Log.d("photo_booth", "stretch end");
+        Log.d("photo_booth", "stretch end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -524,6 +534,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         byte[] tmp = new byte[4];
 
+        Log.d("photo_booth", "squeeze start");
         int sy = Math.max(0, py - scale);
         int ey = Math.min(py + scale, height);
         for (int y = sy; y < ey; y++) {
@@ -549,6 +560,7 @@ public class FunctionImpl implements FunctionAccessor {
 
             }
         }
+        Log.d("photo_booth", "squeeze end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -584,7 +596,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         int radius = (int) (ratio * Math.min(width, height));
 
-        Log.d("photo_booth", "waterstart");
+        Log.d("photo_booth", "water start");
         int sy = Math.max(0, py - radius);
         int ey = Math.min(py + radius, height);
         for (int y = sy; y < ey; y++) {
@@ -612,7 +624,7 @@ public class FunctionImpl implements FunctionAccessor {
             }
         }
 
-        Log.d("photo_booth", "waterend");
+        Log.d("photo_booth", "water end");
         return convert_to_bitmap(newPhoto);
     }
 
@@ -646,6 +658,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         int radius = (int) (ratio * Math.min(width, height));
 
+        Log.d("photo_booth", "twril start");
         int sy = Math.max(0, py - radius);
         int ey = Math.min(py + radius, height);
         for (int y = sy; y < ey; y++) {
@@ -666,6 +679,7 @@ public class FunctionImpl implements FunctionAccessor {
 
             }
         }
+        Log.d("photo_booth", "twril end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -703,6 +717,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         int radius = (int) (ratio * Math.min(width, height));
 
+        Log.d("photo_booth", "ripple start");
         int sy = Math.max(0, py - radius);
         int ey = Math.min(py + radius, height);
         for (int y = sy; y < ey; y++) {
@@ -742,6 +757,7 @@ public class FunctionImpl implements FunctionAccessor {
 
             }
         }
+        Log.d("photo_booth", "ripple end");
 
         return convert_to_bitmap(newPhoto);
     }
@@ -779,7 +795,7 @@ public class FunctionImpl implements FunctionAccessor {
 
         int radius = (int) (ratio * Math.min(width, height));
 
-        Log.d("photo_booth", "mosaicstart");
+        Log.d("photo_booth", "mosaic start");
         int sy = Math.max(size, py - radius);
         int ey = Math.min(py + radius, height - size);
         for (int y = sy; y < ey; y += doublesize) {
@@ -812,7 +828,7 @@ public class FunctionImpl implements FunctionAccessor {
             }
         }
 
-        Log.d("photo_booth", "mosaicend");
+        Log.d("photo_booth", "mosaic end");
         return convert_to_bitmap(newPhoto);
     }
 
@@ -935,12 +951,12 @@ public class FunctionImpl implements FunctionAccessor {
                 r = radiusc * triangle((float) (r / radiusc));
                 theta += angle;
 
-                int xx = (int) (r * Math.cos(theta) + px);
-                int yy = (int) (r * Math.sin(theta) + py);
-                xx = Math.max(0, Math.min(xx, photo.width() - 1));
-                yy = Math.max(0, Math.min(yy, photo.height() - 1));
+                int newX = (int) (r * Math.cos(theta) + px);
+                int newY = (int) (r * Math.sin(theta) + py);
+                newX = Math.max(0, Math.min(newX, photo.width() - 1));
+                newY = Math.max(0, Math.min(newY, photo.height() - 1));
 
-                newPhoto.put(y, x, photo.get(yy, xx));
+                newPhoto.put(y, x, photo.get(newY, newX));
 
 //                int x1 = (int) Math.floor(xx);
 //                int y1 = (int) Math.floor(yy);

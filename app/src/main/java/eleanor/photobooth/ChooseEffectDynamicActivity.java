@@ -108,6 +108,16 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             }
         });
 
+        SurfaceView sv4 = (SurfaceView) findViewById(R.id.surfaceView4);
+        sv4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 4);
+                startActivity(interaction);
+            }
+        });
+
         ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
         iv5.setImageBitmap(fa.mirrorRight(smallPhoto));
         iv5.setOnClickListener(new View.OnClickListener() {
