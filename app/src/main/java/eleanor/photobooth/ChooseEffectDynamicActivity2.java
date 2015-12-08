@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -24,15 +23,14 @@ import org.opencv.android.OpenCVLoader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-
-import eleanor.photobooth.Functions.EFFECTCODE;
 import eleanor.photobooth.Functions.FunctionAccessor;
 import eleanor.photobooth.Functions.FunctionImpl;
 
 /**
- * Created by Eleanor on 2015/11/17.
+ * Created by Eleanor on 2015/12/8.
  */
-public class ChooseEffectDynamicActivity extends Activity implements SurfaceHolder.Callback {
+public class ChooseEffectDynamicActivity2 extends Activity  implements SurfaceHolder.Callback{
+
     Camera camera;
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
@@ -46,7 +44,7 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.choose_effect_camera);
+        setContentView(R.layout.choose_effect_camera_2);
 
         surfaceView = (SurfaceView)findViewById(R.id.surfaceView4);
         surfaceHolder = surfaceView.getHolder();
@@ -65,78 +63,67 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         Bitmap smallPhoto = fa.rescale_photo(originPhoto, 0.3f);
 
         ImageView iv0 = (ImageView) findViewById(R.id.imageView0);
-        iv0.setImageBitmap(fa.squeeze(smallPhoto));
+        iv0.setImageBitmap(fa.water(smallPhoto));
         iv0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 0);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 9);
                 startActivity(interaction);
             }
         });
 
         ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
-        iv1.setImageBitmap(fa.mirrorUp(smallPhoto));
+        iv1.setImageBitmap(fa.mosaic(smallPhoto));
         iv1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 1);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 10);
                 startActivity(interaction);
             }
         });
 
         ImageView iv2 = (ImageView) findViewById(R.id.imageView2);
-        iv2.setImageBitmap(fa.stretch(smallPhoto));
+        iv2.setImageBitmap(fa.ripple(smallPhoto, 0));
         iv2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 2);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 11);
                 startActivity(interaction);
             }
         });
 
         ImageView iv3 = (ImageView) findViewById(R.id.imageView3);
-        iv3.setImageBitmap(fa.mirrorLeft(smallPhoto));
+        iv3.setImageBitmap(fa.ripple(smallPhoto, 1));
         iv3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 3);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 12);
                 startActivity(interaction);
             }
         });
 
         ImageView iv5 = (ImageView) findViewById(R.id.imageView5);
-        iv5.setImageBitmap(fa.mirrorRight(smallPhoto));
+        iv5.setImageBitmap(fa.ripple(smallPhoto, 2));
         iv5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 5);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 14);
                 startActivity(interaction);
             }
         });
 
         ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
-        iv6.setImageBitmap(fa.twirl(smallPhoto));
+        iv6.setImageBitmap(fa.kaleidoscope(smallPhoto));
         iv6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 6);
-                startActivity(interaction);
-            }
-        });
-
-        ImageView iv7 = (ImageView) findViewById(R.id.imageView7);
-        iv7.setImageBitmap(fa.mirrorDown(smallPhoto));
-        iv7.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent interaction = new Intent(ChooseEffectDynamicActivity.this, InteractionDynamicActivity.class);
-                interaction.putExtra("interactionType", 7);
+                Intent interaction = new Intent(ChooseEffectDynamicActivity2.this, InteractionDynamicActivity.class);
+                interaction.putExtra("interactionType", 15);
                 startActivity(interaction);
             }
         });
@@ -145,8 +132,7 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
         iv8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent chooseEffect = new Intent(ChooseEffectDynamicActivity.this, ChooseEffectDynamicActivity2.class);
-                startActivity(chooseEffect);
+                ChooseEffectDynamicActivity2.this.finish();
             }
         });
     }
@@ -311,6 +297,5 @@ public class ChooseEffectDynamicActivity extends Activity implements SurfaceHold
             }
         }
     };
-
 
 }

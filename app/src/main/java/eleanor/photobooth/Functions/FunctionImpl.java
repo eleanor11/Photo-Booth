@@ -579,7 +579,7 @@ public class FunctionImpl implements FunctionAccessor {
         photo.copyTo(newPhoto);
 
         int wavelength = (int) (40 * height / 1024);
-        int amplitude = (int) (5 * height / 1024);
+        int amplitude = 5;
 //        Log.d("photo_booth", "water " + Integer.toString(wavelength) + " " + Integer.toString(amplitude));
 
         int radius = (int) (ratio * Math.min(width, height));
@@ -698,8 +698,8 @@ public class FunctionImpl implements FunctionAccessor {
 
         double xAmplitude = 25.0;
         double yAmplitude = 25.0;
-        double xWavelength = 32.0;
-        double yWavelength = 32.0;
+        double xWavelength = 32.0 * width / 768;
+        double yWavelength = 32.0 * height / 1024;
 
         int radius = (int) (ratio * Math.min(width, height));
 
@@ -720,12 +720,12 @@ public class FunctionImpl implements FunctionAccessor {
                         fy = Math.sin(ny);
                         break;
                     case 1:
-                        fx = mod(nx, 1);
-                        fy = mod(ny, 1);
+                        fx = mod(nx / 2, 1);
+                        fy = mod(ny / 2, 1);
                         break;
                     case 2:
-                        fx = triangle(nx);
-                        fy = triangle(ny);
+                        fx = triangle(nx / 2);
+                        fy = triangle(ny / 2);
                         break;
                     default:
                         fx = Math.sin(nx);
@@ -764,7 +764,7 @@ public class FunctionImpl implements FunctionAccessor {
     }
     @Override
     public Bitmap mosaic(Bitmap bitmap, int px, int py, float ratio){
-        if (true)
+        if (false)
         return bitmap;
 
         Mat photo = convert_to_mat(bitmap);
@@ -774,32 +774,36 @@ public class FunctionImpl implements FunctionAccessor {
         Mat newPhoto = new Mat(photo.size(), photo.type());
         photo.copyTo(newPhoto);
 
-        int size = 9;
+        int size = 7 * height / 1024;
+        int doublesize = size * 2 - 1;
 
         int radius = (int) (ratio * Math.min(width, height));
 
         Log.d("photo_booth", "mosaicstart");
         int sy = Math.max(size, py - radius);
         int ey = Math.min(py + radius, height - size);
-        for (int y = sy; y < ey; y += size) {
+        for (int y = sy; y < ey; y += doublesize) {
+//            Log.d("photo_booth", "y " + Integer.toString(y));
             int dx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
             int sx = Math.max(size, px - dx);
             int ex = Math.min(px + dx, width - size);
-            for (int x = sx; x < ex; x += size) {
+            for (int x = sx; x < ex; x += doublesize) {
 
+//                Log.d("photo_booth", "x " + Integer.toString(x));
                 double k1 = (double)(Math.random() % 100) / 100.0 - 0.5;
                 double k2 = (double)(Math.random() % 100) / 100.0 - 0.5;
                 double m = k1 * (size * 2 - 1);
-                double n = k1 * (size * 2 - 1);
+                double n = k2 * (size * 2 - 1);
 
-                int newY = (int) (y + m) % height;
-                int newX = (int) (x + n) % width;
+                int newY = (int) (y + m);
+                int newX = (int) (x + n);
                 newX = Math.max(0, Math.min(newX, width - 1));
                 newY = Math.max(0, Math.min(newY, height - 1));
 
                 double[] tmp = photo.get(newY, newX);
                 for (int yy = y - size; yy <= y + size; yy++) {
-                    for (int xx = x - size; xx <= x + size; x++) {
+                    for (int xx = x - size; xx <= x + size; xx++) {
+//                        Log.d("photo_booth", "xx " + Integer.toString(xx) + " yy " + Integer.toString(yy));
                         newPhoto.put(yy, xx, tmp);
                     }
                 }

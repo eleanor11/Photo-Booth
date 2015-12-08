@@ -203,12 +203,41 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                 imageView.setImageBitmap(fa.addLineCol(photo));
                 break;
             case 6:
-                photo = fa.kaleidoscope(originPhoto);
-                imageView.setImageBitmap(fa.addPoint(photo));
+                photo = fa.twirl(originPhoto);
+                imageView.setImageBitmap(fa.addCircle(photo));
                 break;
             case 7:
                 photo = fa.mirrorDown(originPhoto);
                 imageView.setImageBitmap(fa.addLineRow(photo));
+                break;
+
+            case 9:
+                photo = fa.water(originPhoto);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 10:
+                photo = fa.mosaic(originPhoto);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 11:
+                photo = fa.ripple(originPhoto, 0);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 12:
+                photo = fa.ripple(originPhoto, 1);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 13:
+                photo = originPhoto;
+                imageView.setImageBitmap(photo);
+                break;
+            case 14:
+                photo = fa.ripple(originPhoto, 2);
+                imageView.setImageBitmap(fa.addCircle(photo));
+                break;
+            case 15:
+                photo = fa.kaleidoscope(originPhoto);
+                imageView.setImageBitmap(fa.addPoint(photo));
                 break;
             default:
                 photo = originPhoto;
@@ -260,14 +289,56 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
             case 6:{
                 int px = pointX * pWidth / iWidth;
                 int py = pointY * pHeight / iHeight;
-                photo = fa.kaleidoscope(originPhoto, px, py);
-                imageView.setImageBitmap(fa.addPoint(photo, px, py));
+                photo = fa.twirl(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
                 break;
             }
             case 7: {
                 int row = pointY * pHeight / iHeight;
                 photo = fa.mirrorDown(originPhoto, originPhoto.getHeight() - row);
                 imageView.setImageBitmap(fa.addLineRow(photo, row));
+                break;
+            }
+            case 9: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.water(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 10: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.mosaic(originPhoto, px, py, circleScale);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 11: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 0);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 12: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 1);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 14: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.ripple(originPhoto, px, py, circleScale, 2);
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale));
+                break;
+            }
+            case 15: {
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                photo = fa.kaleidoscope(originPhoto, px, py);
+                imageView.setImageBitmap(fa.addPoint(photo, px, py));
                 break;
             }
         }
@@ -329,14 +400,15 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
 
                 break;
             }
-            case 6:
+            case 6: {
                 pointMoved = true;
                 pointX = moveX;
                 pointY = moveY;
                 int px = pointX * pWidth / iWidth;
                 int py = pointY * pHeight / iHeight;
-                imageView.setImageBitmap(fa.addPoint(photo, px, py, color));
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
                 break;
+            }
             case 7: {
                 lineMoved = true;
                 pointY = moveY;
@@ -345,6 +417,60 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
 
                 break;
 
+            }
+            case 9: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 10: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 11: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 12: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 14: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+                break;
+            }
+            case 15: {
+                circleMoved = true;
+                pointX = moveX;
+                pointY = moveY;
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addPoint(photo, px, py, color));
+                break;
             }
 
         }

@@ -67,7 +67,7 @@ public class ChooseEffectActivity2 extends Activity{
             });
 
             ImageView iv1 = (ImageView) findViewById(R.id.imageView1);
-            final Bitmap bmp1 = fa.twirl(smallPhoto);
+            final Bitmap bmp1 = fa.mosaic(smallPhoto);
             iv1.setImageBitmap(bmp1);
             iv1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -119,7 +119,7 @@ public class ChooseEffectActivity2 extends Activity{
             });
 
             ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
-            final Bitmap bmp6 = fa.mosaic(smallPhoto);
+            final Bitmap bmp6 = fa.kaleidoscope(smallPhoto);
             iv6.setImageBitmap(bmp6);
             iv6.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -144,7 +144,7 @@ public class ChooseEffectActivity extends Activity {
             });
 
             ImageView iv6 = (ImageView) findViewById(R.id.imageView6);
-            final Bitmap bmp6 = fa.kaleidoscope(smallPhoto);
+            final Bitmap bmp6 = fa.twirl(smallPhoto);
             iv6.setImageBitmap(bmp6);
             iv6.setOnClickListener(new View.OnClickListener() {
                 @Override
