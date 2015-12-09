@@ -396,8 +396,9 @@ public class FunctionImpl implements FunctionAccessor {
             line = red;
         }
 
-        int sj = Math.max(0, row - 2);
-        int ej = Math.min(row + 2, photo.rows());
+        int size = Math.max(1, 2 * photo.height() / 1024);
+        int sj = Math.max(0, row - size);
+        int ej = Math.min(row + size, photo.rows());
 
         for (int i = 0; i < photo.cols(); i++) {
             for (int j = sj; j < ej; j++){
@@ -424,8 +425,9 @@ public class FunctionImpl implements FunctionAccessor {
             line = red;
         }
 
-        int sj = Math.max(0, col - 2);
-        int ej = Math.min(col + 2, photo.cols());
+        int size = Math.max(1, 2 * photo.height() / 1024);
+        int sj = Math.max(0, col - size);
+        int ej = Math.min(col + size, photo.cols());
 
         for (int i = 0; i < photo.rows(); i++) {
             for (int j = sj; j < ej; j++) {
@@ -790,20 +792,21 @@ public class FunctionImpl implements FunctionAccessor {
         Mat newPhoto = new Mat(photo.size(), photo.type());
         photo.copyTo(newPhoto);
 
-        int size = 7 * height / 1024;
-        int doublesize = size * 2 - 1;
+        int size = Math.max(3, 7 * height / 1024);
+//        Log.d("size", Integer.toString(size));
+        int doubleSize = size * 2 - 1;
 
         int radius = (int) (ratio * Math.min(width, height));
 
         Log.d("photo_booth", "mosaic start");
         int sy = Math.max(size, py - radius);
         int ey = Math.min(py + radius, height - size);
-        for (int y = sy; y < ey; y += doublesize) {
+        for (int y = sy; y < ey; y += doubleSize) {
 //            Log.d("photo_booth", "y " + Integer.toString(y));
             int dx = (int) Math.sqrt((double) ((radius * radius) - (y -py) * (y - py)));
             int sx = Math.max(size, px - dx);
             int ex = Math.min(px + dx, width - size);
-            for (int x = sx; x < ex; x += doublesize) {
+            for (int x = sx; x < ex; x += doubleSize) {
 
 //                Log.d("photo_booth", "x " + Integer.toString(x));
                 double k1 = (double)(Math.random() % 100) / 100.0 - 0.5;
@@ -863,8 +866,9 @@ public class FunctionImpl implements FunctionAccessor {
         }
 
         int scale = (int) (ratio * Math.min(photo.width(), photo.height()));
-        int scale1 = scale - 2;
-        int scale2 = scale + 2;
+        int size = Math.max(1, 2 * photo.height() / 1024);
+        int scale1 = scale - size;
+        int scale2 = scale + size;
 
         int sy = Math.max(0, py - scale);
         int ey = Math.min(py + scale, photo.rows());
@@ -992,7 +996,6 @@ public class FunctionImpl implements FunctionAccessor {
         return convert_to_bitmap(newPhoto);
     }
 
-    int pointScale = 7;
 
     @Override
     public Bitmap addPoint(Bitmap bitmap){
@@ -1011,11 +1014,13 @@ public class FunctionImpl implements FunctionAccessor {
             point = red;
         }
 
-        int sy = Math.max(0, py - pointScale);
-        int ey = Math.min(py + pointScale, photo.height());
+        int size = 7 * photo.height() / 1024;
+
+        int sy = Math.max(0, py - size);
+        int ey = Math.min(py + size, photo.height());
         for (int y = sy; y < ey; y++){
-            int sx = Math.max(0, px - (pointScale - Math.abs(py - y)));
-            int ex = Math.min(px + (pointScale - Math.abs(py - y)), photo.width());
+            int sx = Math.max(0, px - (size - Math.abs(py - y)));
+            int ex = Math.min(px + (size - Math.abs(py - y)), photo.width());
             for (int x = sx; x < ex; x++){
                 photo.put(y, x, point);
             }
