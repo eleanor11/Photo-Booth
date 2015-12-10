@@ -210,6 +210,10 @@ public class InteractionActivity extends Activity {
 //                            t += " ix = " + Integer.toString(imageView.getWidth()) + " iy = " + Integer.toString(imageView.getHeight());
 //                            Log.d(TAG, t);
                             break;
+                      /*
+                      * Todo
+                      * rescale
+                      * */
                         default:
 
                     }
