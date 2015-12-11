@@ -199,6 +199,16 @@ public class InteractionActivity extends Activity {
                             }
 
                             break;
+                      /*
+                      * Todo
+                      * rescale
+                      * */
+                        case MotionEvent.ACTION_POINTER_DOWN:
+
+                            break;
+                        case MotionEvent.ACTION_POINTER_UP:
+
+                            break;
                         case MotionEvent.ACTION_MOVE:
 //                            Log.d(TAG, "move");
                             moveX = (int) event.getX();
@@ -210,10 +220,6 @@ public class InteractionActivity extends Activity {
 //                            t += " ix = " + Integer.toString(imageView.getWidth()) + " iy = " + Integer.toString(imageView.getHeight());
 //                            Log.d(TAG, t);
                             break;
-                      /*
-                      * Todo
-                      * rescale
-                      * */
                         default:
 
                     }

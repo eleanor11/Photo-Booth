@@ -131,6 +131,16 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                         }
 
                         break;
+                      /*
+                      * Todo
+                      * rescale
+                      * */
+                    case MotionEvent.ACTION_POINTER_DOWN:
+
+                        break;
+                    case MotionEvent.ACTION_POINTER_UP:
+
+                        break;
                     case MotionEvent.ACTION_MOVE:
 //                        Log.d(TAG, "move");
                         moveX = (int) event.getX();
