@@ -40,11 +40,16 @@ public class InteractionActivity extends Activity {
     Boolean lineMoved = false;
 
     Boolean moveCircle = false;
+    Boolean zoomCircle = false;
     Boolean circleMoved = false;
 
     Boolean pointMoved = false;
 
     float circleScale = 0.3f;
+    float circleScaleMin = 0.05f;
+    float circleScaleMax = 0.35f;
+    float tmpCircleScale;
+    double startDis, endDis;
 
     int moveX, moveY;
     int pointX, pointY;
@@ -165,6 +170,7 @@ public class InteractionActivity extends Activity {
                 lineMoved = false;
                 circleMoved = false;
                 pointMoved = false;
+                zoomCircle = false;
                 return false;
             }
         });
@@ -173,12 +179,14 @@ public class InteractionActivity extends Activity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int eventAction = event.getAction();
-                    switch (eventAction) {
-                        case MotionEvent.ACTION_DOWN:
-//                            Log.d(TAG, "down");
+                    switch (eventAction & MotionEvent.ACTION_MASK) {
+
+                        case MotionEvent.ACTION_DOWN: {
+//                            Log.d(TAG, "event down");
                             break;
-                        case MotionEvent.ACTION_UP:
-//                            Log.d(TAG, "up");
+                        }
+                        case MotionEvent.ACTION_UP: {
+//                            Log.d(TAG, "event up");
 //                            longPress = false;
                             moveRow = false;
                             moveCol = false;
@@ -194,32 +202,50 @@ public class InteractionActivity extends Activity {
                             }
 
                             if (pointMoved) {
-                                redrawPhoto();;
+                                redrawPhoto();
                                 pointMoved = false;
                             }
 
                             break;
-                      /*
-                      * Todo
-                      * rescale
-                      * */
-                        case MotionEvent.ACTION_POINTER_DOWN:
-
+                        }
+                        case MotionEvent.ACTION_POINTER_DOWN: {
+                            Log.d(TAG, "event pointer down");
+                            double dis = distance(event);
+                            if (dis > 5f) {
+                                startDis = dis;
+                                tmpCircleScale = circleScale;
+                                zoomCircle = true;
+                                lineMoved = false;
+                                circleMoved = false;
+                                pointMoved = false;
+                            }
                             break;
-                        case MotionEvent.ACTION_POINTER_UP:
-
+                        }
+                        case MotionEvent.ACTION_POINTER_UP: {
+                            Log.d(TAG, "event pointer up");
+                            startDis = 0;
+                            tmpCircleScale = 0;
+                            zoomCircle = false;
                             break;
-                        case MotionEvent.ACTION_MOVE:
-//                            Log.d(TAG, "move");
-                            moveX = (int) event.getX();
-                            moveY = (int) event.getY();
+                        }
+                        case MotionEvent.ACTION_MOVE: {
                             //if (longPress)
-                            moveLine();
+                            if (zoomCircle) {
+                                Log.d(TAG, "event zoom");
+                                endDis = distance(event);
+                                rescaleCircle();
+                            } else {
+                                Log.d(TAG, "event move");
+                                moveX = (int) event.getX();
+                                moveY = (int) event.getY();
+                                moveLine();
+                            }
 //                            String t = "mx = " + Integer.toString(moveX) + " my = " + Integer.toString(moveY);
 //                            t += " xx = " + Integer.toString(lineX) + " yy = " + Integer.toString(lineY);
 //                            t += " ix = " + Integer.toString(imageView.getWidth()) + " iy = " + Integer.toString(imageView.getHeight());
 //                            Log.d(TAG, t);
                             break;
+                        }
                         default:
 
                     }
@@ -251,6 +277,12 @@ public class InteractionActivity extends Activity {
         });
 
     };
+
+    double distance(MotionEvent e) {
+        double eX = e.getX(1) - e.getX(0);
+        double eY = e.getY(1) - e.getY(0);
+        return Math.sqrt(eX * eX + eY * eY);
+    }
 
     void redrawPhoto() {
         switch (type) {
@@ -344,6 +376,27 @@ public class InteractionActivity extends Activity {
                 imageView.setImageBitmap(fa.addPoint(photo, px, py));
                 break;
             }
+        }
+    }
+
+    void rescaleCircle() {
+        String color = "red";
+        switch (type) {
+            case 0:
+            case 2:
+            case 6:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 14: {
+                circleScale = (float) (tmpCircleScale * endDis / startDis);
+                circleScale = Math.max(circleScaleMin, Math.min(circleScale, circleScaleMax));
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+            }
+
         }
     }
 

@@ -53,10 +53,15 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
 
     Boolean moveCircle = false;
     Boolean circleMoved = false;
+    Boolean zoomCircle = false;
 
     Boolean pointMoved = false;
 
     float circleScale = 0.3f;
+    float circleScaleMin = 0.05f;
+    float circleScaleMax = 0.35f;
+    float tmpCircleScale;
+    double startDis, endDis;
 
     int moveX, moveY;
     int pointX, pointY;
@@ -97,6 +102,7 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                 lineMoved = false;
                 circleMoved = false;
                 pointMoved = false;
+                zoomCircle = false;
                 return false;
             }
         });
@@ -104,7 +110,7 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int eventAction = event.getAction();
-                switch (eventAction) {
+                switch (eventAction & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
 //                        Log.d(TAG, "down");
                         break;
@@ -125,29 +131,46 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                         }
 
                         if (pointMoved) {
-                            redrawPhoto();
-                            ;
+                            redrawPhoto();                            ;
                             pointMoved = false;
                         }
 
                         break;
-                      /*
-                      * Todo
-                      * rescale
-                      * */
-                    case MotionEvent.ACTION_POINTER_DOWN:
-
+                    case MotionEvent.ACTION_POINTER_DOWN: {
+                        Log.d(TAG, "event pointer down");
+                        double dis = distance(event);
+                        if (dis > 5f) {
+                            startDis = dis;
+                            tmpCircleScale = circleScale;
+                            zoomCircle = true;
+                            lineMoved = false;
+                            circleMoved = false;
+                            pointMoved = false;
+                        }
                         break;
-                    case MotionEvent.ACTION_POINTER_UP:
-
+                    }
+                    case MotionEvent.ACTION_POINTER_UP: {
+                        Log.d(TAG, "event pointer up");
+                        startDis = 0;
+                        tmpCircleScale = 0;
+                        zoomCircle = false;
                         break;
-                    case MotionEvent.ACTION_MOVE:
+                    }
+                    case MotionEvent.ACTION_MOVE: {
 //                        Log.d(TAG, "move");
-                        moveX = (int) event.getX();
-                        moveY = (int) event.getY();
-                        moveLine();
+                        if (zoomCircle) {
+                            Log.d(TAG, "event zoom");
+                            endDis = distance(event);
+                            rescaleCircle();
+                        } else {
+                            Log.d(TAG, "event move");
+                            moveX = (int) event.getX();
+                            moveY = (int) event.getY();
+                            moveLine();
+                        }
 
                         break;
+                    }
                     default:
 
                 }
@@ -257,6 +280,12 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
 //        fa.save_photo(originPhoto);
     }
 
+    double distance(MotionEvent e) {
+        double eX = e.getX(1) - e.getX(0);
+        double eY = e.getY(1) - e.getY(0);
+        return Math.sqrt(eX * eX + eY * eY);
+    }
+
     void redrawPhoto() {
         switch (typeNo) {
             case 0: {
@@ -357,6 +386,27 @@ public class InteractionDynamicActivity extends Activity implements SurfaceHolde
                 imageView.setImageBitmap(fa.addPoint(photo, px, py));
                 break;
             }
+        }
+    }
+
+    void rescaleCircle() {
+        String color = "red";
+        switch (typeNo) {
+            case 0:
+            case 2:
+            case 6:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 14: {
+                circleScale = (float) (tmpCircleScale * endDis / startDis);
+                circleScale = Math.max(circleScaleMin, Math.min(circleScale, circleScaleMax));
+                int px = pointX * pWidth / iWidth;
+                int py = pointY * pHeight / iHeight;
+                imageView.setImageBitmap(fa.addCircle(photo, px, py, circleScale, color));
+            }
+
         }
     }
 
